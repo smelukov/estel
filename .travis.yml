@@ -8,7 +8,3 @@ language: node_js
 script: "npm run travis"
 node_js:
   - "node"
-
-after_success:
-  - cat ./coverage/lcov.info | node_modules/.bin/coveralls --verbose
-  - rm -rf ./coverage
