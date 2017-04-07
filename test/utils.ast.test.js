@@ -2,7 +2,6 @@ var esprima = require('esprima');
 var Syntax = esprima.Syntax;
 var assert = require('chai').assert;
 var utils = require('../lib/utils');
-var parser = require('../lib/parser');
 
 describe('Utils.AST', function() {
     it('#createLiteral', function() {
