@@ -1,0 +1,8 @@
+.idea/
+.vscode/
+node_modules
+coverage
+*.log
+*.lock
+*.ignore.*
+.DS_store
