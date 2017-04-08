@@ -1,5 +1,5 @@
 {
-  "name": "estel-processor",
+  "name": "estel",
   "version": "0.1.0",
   "description": "",
   "scripts": {
@@ -17,12 +17,12 @@
     "parser"
   ],
   "main": "./index.js",
-  "homepage": "https://github.com/smelukov/estel-processor",
+  "homepage": "https://github.com/smelukov/estel",
   "author": "Sergey Melyukov <s.melukov@gmail.com> (https://github.com/smelukov)",
   "license": "MIT",
-  "repository": "smelukov/estel-processor",
+  "repository": "smelukov/estel",
   "bugs": {
-    "url": "https://github.com/smelukov/estel-processor/issues"
+    "url": "https://github.com/smelukov/estel/issues"
   },
   "dependencies": {
     "escodegen": "^1.8.1",
