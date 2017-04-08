@@ -6,8 +6,8 @@
     "test": "mocha test/*.test.js",
     "lint": "eslint lib test",
     "cover": "istanbul cover _mocha -- test/*.test.js",
-    "coveralls": "istanbul cover _mocha --report lcovonly -- test/*.test.js && cat ./coverage/lcov.info | coveralls",
-    "travis": "npm run lint && npm run test && npm run coveralls"
+    "coveralls": "istanbul cover _mocha --report lcovonly -- test/*.test.js && cat ./coverage/lcov.info | coveralls --verbose",
+    "travis": "npm run lint && npm run test"
   },
   "keywords": [
     "ecmascript",
