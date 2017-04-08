@@ -678,6 +678,91 @@ describe('Processor.names', function() {
             assert.equal(f3IfBodyScope.getOwnReference('a').token.type, Syntax.Literal);
             assert.equal(f3IfBodyScope.getOwnReference('a').token.value, 90);
         });
+
+        it('arrow function', function() {
+            var code = '\
+                (function F1() {\
+                    var a = 10;\
+                    var F2 = () => { };\
+                    var F3 = (j, k) => { var l = 60; if (1) { var m = 70; let n = 80; let a = 90 } }\
+                })()\
+                ';
+
+            process(esprima.parse(code), rootScope);
+            assert.equal(rootScope.countReferences(), 0);
+            assert.equal(rootScope.countOwnReferences(), 0);
+            assert.equal(rootScope.scopes.length, 1);
+
+            var f1BodyScope = rootScope.scopes[0];
+
+            assert.equal(f1BodyScope.countReferences(), 5);
+            assert.equal(f1BodyScope.countOwnReferences(), 5);
+            assert.equal(f1BodyScope.scopes.length, 2);
+
+            assert.isTrue(f1BodyScope.hasOwnReference('F1'));
+            assert.equal(f1BodyScope.getOwnReference('F1').token.type, Syntax.FunctionExpression);
+
+            assert.isTrue(f1BodyScope.hasOwnReference('F2'));
+            assert.equal(f1BodyScope.getOwnReference('F2').token.type, Syntax.ArrowFunctionExpression);
+
+            assert.isTrue(f1BodyScope.hasOwnReference('F3'));
+            assert.equal(f1BodyScope.getOwnReference('F3').token.type, Syntax.ArrowFunctionExpression);
+
+            assert.isTrue(f1BodyScope.hasOwnReference('arguments'));
+            assert.equal(f1BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
+
+            assert.isTrue(f1BodyScope.hasOwnReference('a'));
+            assert.equal(f1BodyScope.getOwnReference('a').token.type, Syntax.Literal);
+            assert.equal(f1BodyScope.getOwnReference('a').token.value, 10);
+
+            var f2BodyScope = f1BodyScope.scopes[0];
+
+            assert.equal(f2BodyScope.countReferences(), 5);
+            assert.equal(f2BodyScope.countOwnReferences(), 0);
+            assert.strictEqual(f2BodyScope.getReference('arguments'), f1BodyScope.getOwnReference('arguments'));
+            assert.equal(f2BodyScope.scopes.length, 0);
+
+            var f3BodyScope = f1BodyScope.scopes[1];
+
+            assert.equal(f3BodyScope.countReferences(), 9);
+            assert.equal(f3BodyScope.countOwnReferences(), 4);
+            assert.equal(f3BodyScope.scopes.length, 1);
+
+            assert.strictEqual(f2BodyScope.getReference('arguments'), f1BodyScope.getOwnReference('arguments'));
+
+            assert.isTrue(f3BodyScope.hasOwnReference('j'));
+            assert.isTrue(f3BodyScope.getOwnReference('j').isArg);
+            assert.equal(f3BodyScope.getOwnReference('j').token.type, Syntax.Identifier);
+            assert.equal(f3BodyScope.getOwnReference('j').argIndex, 0);
+
+            assert.isTrue(f3BodyScope.hasOwnReference('k'));
+            assert.isTrue(f3BodyScope.getOwnReference('k').isArg);
+            assert.equal(f3BodyScope.getOwnReference('k').token.type, Syntax.Identifier);
+            assert.equal(f3BodyScope.getOwnReference('k').argIndex, 1);
+
+            assert.isTrue(f3BodyScope.hasOwnReference('l'));
+            assert.equal(f3BodyScope.getOwnReference('l').token.type, Syntax.Literal);
+            assert.equal(f3BodyScope.getOwnReference('l').token.value, 60);
+
+            assert.isTrue(f3BodyScope.hasOwnReference('m'));
+            assert.equal(f3BodyScope.getOwnReference('m').token.type, Syntax.Literal);
+            assert.equal(f3BodyScope.getOwnReference('m').token.value, 70);
+
+            var f3IfBodyScope = f3BodyScope.scopes[0];
+
+            assert.equal(f3IfBodyScope.countReferences(), 10);
+            assert.equal(f3IfBodyScope.countOwnReferences(), 2);
+            assert.equal(f3IfBodyScope.scopes.length, 0);
+
+            assert.isTrue(f3IfBodyScope.hasOwnReference('n'));
+            assert.equal(f3IfBodyScope.getOwnReference('n').token.type, Syntax.Literal);
+            assert.equal(f3IfBodyScope.getOwnReference('n').token.value, 80);
+
+            assert.isTrue(f3IfBodyScope.hasOwnReference('a'));
+            assert.equal(f3IfBodyScope.getOwnReference('a').token.type, Syntax.Literal);
+            assert.equal(f3IfBodyScope.getOwnReference('a').token.value, 90);
+        });
+
     });
 
     describe('class', function() {

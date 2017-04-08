@@ -192,6 +192,39 @@ describe('Scope', function() {
             assert.equal(childScope1.countOwnReferences(), 0);
             assert.equal(rootScope.countReferences(), 0);
             assert.equal(rootScope.countOwnReferences(), 0);
+
+            rootScope.setOwnReference('a', 'someValue');
+            rootScope.setOwnReference('b', 'someValue');
+            rootScope.setOwnReference('c', 'someValue');
+            childScope1.setOwnReference('a', 'someValue2');
+            childScope1.setOwnReference('b', 'someValue3');
+            childScope1.setOwnReference('d', 'someValue3');
+            childScope2.setOwnReference('a', 'someValue4');
+            childScope2.setOwnReference('b', 'someValue4');
+
+            assert.isFalse(rootScope.removeScope({}));
+            assert.equal(childScope2.countReferences(), 4);
+            assert.equal(childScope2.countOwnReferences(), 2);
+            assert.equal(childScope1.countReferences(), 4);
+            assert.equal(childScope1.countOwnReferences(), 3);
+            assert.equal(rootScope.countReferences(), 3);
+            assert.equal(rootScope.countOwnReferences(), 3);
+
+            rootScope.removeScope(childScope1);
+            assert.equal(childScope2.countReferences(), 3);
+            assert.equal(childScope2.countOwnReferences(), 2);
+            assert.equal(childScope1.countReferences(), 3);
+            assert.equal(childScope1.countOwnReferences(), 3);
+            assert.equal(rootScope.countReferences(), 3);
+            assert.equal(rootScope.countOwnReferences(), 3);
+
+            childScope1.removeScope(childScope2);
+            assert.equal(childScope2.countReferences(), 2);
+            assert.equal(childScope2.countOwnReferences(), 2);
+            assert.equal(childScope1.countReferences(), 3);
+            assert.equal(childScope1.countOwnReferences(), 3);
+            assert.equal(rootScope.countReferences(), 3);
+            assert.equal(rootScope.countOwnReferences(), 3);
         });
     });
 });
