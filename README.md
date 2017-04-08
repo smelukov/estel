@@ -25,7 +25,7 @@ let ast = parser.parse(`
 
 process(ast, scope);
 
-console.log(scope.getOwnReferencesNames()); // ['a', 'c', 'Fn']
-console.log(scope.scopes[0].getOwnReferencesNames()); // ['d']
-console.log(scope.scopes[1].getOwnReferencesNames()); // ['arguments', 'param1', 'param2', 'b']
+console.log(scope.getOwnReferenceNames()); // ['a', 'c', 'Fn']
+console.log(scope.scopes[0].getOwnReferenceNames()); // ['d']
+console.log(scope.scopes[1].getOwnReferenceNames()); // ['arguments', 'param1', 'param2', 'b']
 ```
