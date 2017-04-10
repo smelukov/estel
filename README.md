@@ -14,7 +14,8 @@
 
 ```js
 let Scope = require('estel').Scope;
-let process = require('estel').processNames;
+let processNames = require('estel').processNames;
+let processValues = require('estel').processValues;
 let parser = require('estel').parser;
 
 let scope = new Scope();
@@ -23,9 +24,13 @@ let ast = parser.parse(`
     if(1) { var c; let d; }
     function Fn(param1, param2) { var b = 20 }`);
 
-process(ast, scope);
+processNames(ast, scope);
 
 console.log(scope.getOwnReferenceNames()); // ['a', 'c', 'Fn']
 console.log(scope.scopes[0].getOwnReferenceNames()); // ['d']
 console.log(scope.scopes[1].getOwnReferenceNames()); // ['arguments', 'param1', 'param2', 'b']
+
+processValues(ast);
+
+console.log(scope.getReference('a').token.value); // 10
 ```
