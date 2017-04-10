@@ -94,4 +94,95 @@ describe('Processor.values', function() {
             assert.equal(rootScope.getReference('a').token.name, 'undefined');
         });
     });
+
+    describe('object expression', function() {
+        it('creation', function() {
+            var code = 'var obj = { }';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.property(rootScope.getReference('obj').token, 'obj');
+            assert.isObject(rootScope.getReference('obj').token.obj);
+        });
+
+        it('key - literal, value - literal', function() {
+            var code = 'var obj = { 0: 10, 1: 20 }';
+            var ast = esprima.parse(code);
+            var obj;
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            obj = rootScope.getReference('obj').token.obj;
+
+            assert.deepEqual(obj, { 0: 10, 1: 20 });
+        });
+
+        it('key - identifier, value - literal', function() {
+            var code = 'var obj = { a: 10, b: 20 }';
+            var ast = esprima.parse(code);
+            var obj;
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            obj = rootScope.getReference('obj').token.obj;
+
+            assert.deepEqual(obj, { a: 10, b: 20 });
+        });
+
+        it('key - identifier, value - identifier', function() {
+            var code = 'var a = 10, b = 20; var obj = { a: a, b }';
+            var ast = esprima.parse(code);
+            var obj;
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            obj = rootScope.getReference('obj').token.obj;
+
+            assert.deepEqual(obj, { a: 10, b: 20 });
+        });
+
+        it('key - computed, value - identifier', function() {
+            var code = 'var a = 10, b = 20; var obj = { [a]: a, b }';
+            var ast = esprima.parse(code);
+            var obj;
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            obj = rootScope.getReference('obj').token.obj;
+
+            assert.deepEqual(obj, { 10: 10, b: 20 });
+        });
+
+        it('key - identifier, value - object expression', function() {
+            var code = 'var a = 10, b = 20; var obj = { a: { a, b } }';
+            var ast = esprima.parse(code);
+            var obj;
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            obj = rootScope.getReference('obj').token.obj;
+
+            assert.deepEqual(obj, { a: { a: 10, b: 20 } });
+        });
+
+        it('key - undefined identifier, value - undefined identifier', function() {
+            var code = 'var obj = { [a]: a, b }';
+            var ast = esprima.parse(code);
+            var obj;
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            obj = rootScope.getReference('obj').token.obj;
+
+            assert.deepEqual(obj, { undefined: undefined, b: undefined });
+        });
+    });
 });
