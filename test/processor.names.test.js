@@ -1,5 +1,4 @@
 var esprima = require('esprima');
-var Syntax = require('esprima').Syntax;
 var assert = require('chai').assert;
 var Scope = require('../lib/scope');
 var process = require('../lib/namesProcessor');
@@ -18,20 +17,9 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 0);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('b'));
-            assert.equal(rootScope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('b').token.value, 20);
-
             assert.isTrue(rootScope.hasOwnReference('c'));
-            assert.equal(rootScope.getOwnReference('c').token.type, Syntax.Identifier);
-            assert.equal(rootScope.getOwnReference('c').token.name, 'undefined');
-
             assert.isTrue(rootScope.hasOwnReference('d'));
-            assert.equal(rootScope.getOwnReference('d').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('d').token.value, 30);
         });
 
         it('inside if', function() {
@@ -41,12 +29,7 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 1);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 20);
-
             assert.isTrue(rootScope.hasOwnReference('b'));
-            assert.equal(rootScope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('b').token.value, 30);
 
             var childScope = rootScope.scopes[0];
 
@@ -62,16 +45,8 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 1);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('b'));
-            assert.equal(rootScope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('b').token.value, 20);
-
             assert.isTrue(rootScope.hasOwnReference('i'));
-            assert.equal(rootScope.getOwnReference('i').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('i').token.value, 0);
 
             var forScope = rootScope.scopes[0];
 
@@ -92,12 +67,7 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 1);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('b'));
-            assert.equal(rootScope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('b').token.value, 20);
 
             var whileBodyScope = rootScope.scopes[0];
 
@@ -112,12 +82,7 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 1);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('b'));
-            assert.equal(rootScope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('b').token.value, 20);
 
             var switchScope = rootScope.scopes[0];
 
@@ -134,20 +99,9 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 0);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('b'));
-            assert.equal(rootScope.getOwnReference('b').token.type, Syntax.Identifier);
-            assert.equal(rootScope.getOwnReference('b').token.name, 'undefined');
-
             assert.isTrue(rootScope.hasOwnReference('c'));
-            assert.equal(rootScope.getOwnReference('c').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('c').token.value, 20);
-
             assert.isTrue(rootScope.hasOwnReference('d'));
-            assert.equal(rootScope.getOwnReference('d').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('d').token.value, 30);
         });
 
         it('inside if', function() {
@@ -157,12 +111,7 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 1);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('c'));
-            assert.equal(rootScope.getOwnReference('c').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('c').token.value, 40);
 
             var childScope = rootScope.scopes[0];
 
@@ -171,12 +120,7 @@ describe('Processor.names', function() {
             assert.equal(childScope.scopes.length, 0);
 
             assert.isTrue(childScope.hasOwnReference('a'));
-            assert.equal(childScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(childScope.getOwnReference('a').token.value, 20);
-
             assert.isTrue(childScope.hasOwnReference('b'));
-            assert.equal(childScope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(childScope.getOwnReference('b').token.value, 30);
         });
 
         it('inside for', function() {
@@ -191,8 +135,6 @@ describe('Processor.names', function() {
             assert.equal(forScope.scopes.length, 1);
 
             assert.isTrue(forScope.hasOwnReference('i'));
-            assert.equal(forScope.getOwnReference('i').token.type, Syntax.Literal);
-            assert.equal(forScope.getOwnReference('i').token.value, 0);
 
             var forBodyScope = forScope.scopes[0];
 
@@ -205,12 +147,7 @@ describe('Processor.names', function() {
             assert.equal(forBodyScope.scopes.length, 0);
 
             assert.isTrue(forBodyScope.hasOwnReference('b'));
-            assert.equal(forBodyScope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(forBodyScope.getOwnReference('b').token.value, 20);
-
             assert.isTrue(forBodyScope.hasOwnReference('c'));
-            assert.equal(forBodyScope.getOwnReference('c').token.type, Syntax.Literal);
-            assert.equal(forBodyScope.getOwnReference('c').token.value, 30);
         });
 
         it('inside while', function() {
@@ -219,8 +156,6 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 1);
 
             assert.isTrue(rootScope.hasOwnReference('c'));
-            assert.equal(rootScope.getOwnReference('c').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('c').token.value, 30);
 
             var whileBodyScope = rootScope.scopes[0];
 
@@ -229,12 +164,7 @@ describe('Processor.names', function() {
             assert.equal(whileBodyScope.scopes.length, 0);
 
             assert.isTrue(whileBodyScope.hasOwnReference('a'));
-            assert.equal(whileBodyScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(whileBodyScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(whileBodyScope.hasOwnReference('b'));
-            assert.equal(whileBodyScope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(whileBodyScope.getOwnReference('b').token.value, 20);
         });
 
         it('inside catch', function() {
@@ -243,12 +173,7 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 2);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('c'));
-            assert.equal(rootScope.getOwnReference('c').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('c').token.value, 30);
 
             var tryScope = rootScope.scopes[0];
 
@@ -257,8 +182,6 @@ describe('Processor.names', function() {
             assert.equal(tryScope.scopes.length, 0);
 
             assert.isTrue(tryScope.hasOwnReference('b'));
-            assert.equal(tryScope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(tryScope.getOwnReference('b').token.value, 20);
 
             var catchScope = rootScope.scopes[1];
 
@@ -267,11 +190,7 @@ describe('Processor.names', function() {
             assert.equal(catchScope.scopes.length, 0);
 
             assert.isTrue(catchScope.hasOwnReference('d'));
-            assert.equal(catchScope.getOwnReference('d').token.type, Syntax.Literal);
-            assert.equal(catchScope.getOwnReference('d').token.value, 40);
-
             assert.isTrue(catchScope.hasOwnReference('e'));
-            assert.equal(catchScope.getOwnReference('e').token.type, Syntax.Identifier);
         });
 
         describe('inside switch', function() {
@@ -281,8 +200,6 @@ describe('Processor.names', function() {
                 assert.equal(rootScope.scopes.length, 1);
 
                 assert.isTrue(rootScope.hasOwnReference('a'));
-                assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-                assert.equal(rootScope.getOwnReference('a').token.value, 10);
 
                 var switchBodyScope = rootScope.scopes[0];
 
@@ -291,12 +208,7 @@ describe('Processor.names', function() {
                 assert.equal(switchBodyScope.scopes.length, 0);
 
                 assert.isTrue(switchBodyScope.hasOwnReference('b'));
-                assert.equal(switchBodyScope.getOwnReference('b').token.type, Syntax.Literal);
-                assert.equal(switchBodyScope.getOwnReference('b').token.value, 20);
-
                 assert.isTrue(switchBodyScope.hasOwnReference('c'));
-                assert.equal(switchBodyScope.getOwnReference('c').token.type, Syntax.Literal);
-                assert.equal(switchBodyScope.getOwnReference('c').token.value, 30);
             });
 
             it('with block', function() {
@@ -312,8 +224,6 @@ describe('Processor.names', function() {
                 assert.equal(rootScope.scopes.length, 1);
 
                 assert.isTrue(rootScope.hasOwnReference('a'));
-                assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-                assert.equal(rootScope.getOwnReference('a').token.value, 10);
 
                 var switchBodyScope = rootScope.scopes[0];
 
@@ -322,8 +232,6 @@ describe('Processor.names', function() {
                 assert.equal(switchBodyScope.scopes.length, 1);
 
                 assert.isTrue(switchBodyScope.hasOwnReference('c'));
-                assert.equal(switchBodyScope.getOwnReference('c').token.type, Syntax.Literal);
-                assert.equal(switchBodyScope.getOwnReference('c').token.value, 30);
 
                 var case1BodyScope = switchBodyScope.scopes[0];
 
@@ -332,8 +240,6 @@ describe('Processor.names', function() {
                 assert.equal(case1BodyScope.scopes.length, 0);
 
                 assert.isTrue(case1BodyScope.hasOwnReference('b'));
-                assert.equal(case1BodyScope.getOwnReference('b').token.type, Syntax.Literal);
-                assert.equal(case1BodyScope.getOwnReference('b').token.value, 20);
             });
         });
     });
@@ -352,13 +258,9 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 2);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
 
             assert.isTrue(rootScope.hasOwnReference('F1'));
-            assert.equal(rootScope.getOwnReference('F1').token.type, Syntax.FunctionDeclaration);
             assert.isTrue(rootScope.hasOwnReference('F3'));
-            assert.equal(rootScope.getOwnReference('F3').token.type, Syntax.FunctionDeclaration);
 
             var f1BodyScope = rootScope.scopes[0];
 
@@ -367,25 +269,17 @@ describe('Processor.names', function() {
             assert.equal(f1BodyScope.scopes.length, 1);
 
             assert.isTrue(f1BodyScope.hasOwnReference('arguments'));
-            assert.equal(f1BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
 
             assert.isTrue(f1BodyScope.hasOwnReference('b'));
             assert.isTrue(f1BodyScope.getOwnReference('b').isArg);
-            assert.equal(f1BodyScope.getOwnReference('b').token.type, Syntax.Identifier);
             assert.equal(f1BodyScope.getOwnReference('b').argIndex, 0);
 
             assert.isTrue(f1BodyScope.hasOwnReference('c'));
             assert.isTrue(f1BodyScope.getOwnReference('c').isArg);
-            assert.equal(f1BodyScope.getOwnReference('c').token.type, Syntax.Identifier);
             assert.equal(f1BodyScope.getOwnReference('c').argIndex, 1);
 
             assert.isTrue(f1BodyScope.hasOwnReference('d'));
-            assert.equal(f1BodyScope.getOwnReference('d').token.type, Syntax.Literal);
-            assert.equal(f1BodyScope.getOwnReference('d').token.value, 20);
-
             assert.isTrue(f1BodyScope.hasOwnReference('e'));
-            assert.equal(f1BodyScope.getOwnReference('e').token.type, Syntax.Literal);
-            assert.equal(f1BodyScope.getOwnReference('e').token.value, 30);
 
             var f2BodyScope = f1BodyScope.scopes[0];
 
@@ -394,25 +288,17 @@ describe('Processor.names', function() {
             assert.equal(f2BodyScope.scopes.length, 0);
 
             assert.isTrue(f2BodyScope.hasOwnReference('arguments'));
-            assert.equal(f2BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
 
             assert.isTrue(f2BodyScope.hasOwnReference('f'));
             assert.isTrue(f2BodyScope.getOwnReference('f').isArg);
-            assert.equal(f2BodyScope.getOwnReference('f').token.type, Syntax.Identifier);
             assert.equal(f2BodyScope.getOwnReference('f').argIndex, 0);
 
             assert.isTrue(f2BodyScope.hasOwnReference('g'));
             assert.isTrue(f2BodyScope.getOwnReference('g').isArg);
-            assert.equal(f2BodyScope.getOwnReference('g').token.type, Syntax.Identifier);
             assert.equal(f2BodyScope.getOwnReference('g').argIndex, 1);
 
             assert.isTrue(f2BodyScope.hasOwnReference('h'));
-            assert.equal(f2BodyScope.getOwnReference('h').token.type, Syntax.Literal);
-            assert.equal(f2BodyScope.getOwnReference('h').token.value, 40);
-
             assert.isTrue(f2BodyScope.hasOwnReference('i'));
-            assert.equal(f2BodyScope.getOwnReference('i').token.type, Syntax.Literal);
-            assert.equal(f2BodyScope.getOwnReference('i').token.value, 50);
 
             var f3BodyScope = rootScope.scopes[1];
 
@@ -421,25 +307,17 @@ describe('Processor.names', function() {
             assert.equal(f3BodyScope.scopes.length, 1);
 
             assert.isTrue(f3BodyScope.hasOwnReference('arguments'));
-            assert.equal(f3BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
 
             assert.isTrue(f3BodyScope.hasOwnReference('j'));
             assert.isTrue(f3BodyScope.getOwnReference('j').isArg);
-            assert.equal(f3BodyScope.getOwnReference('j').token.type, Syntax.Identifier);
             assert.equal(f3BodyScope.getOwnReference('j').argIndex, 0);
 
             assert.isTrue(f3BodyScope.hasOwnReference('k'));
             assert.isTrue(f3BodyScope.getOwnReference('k').isArg);
-            assert.equal(f3BodyScope.getOwnReference('k').token.type, Syntax.Identifier);
             assert.equal(f3BodyScope.getOwnReference('k').argIndex, 1);
 
             assert.isTrue(f3BodyScope.hasOwnReference('l'));
-            assert.equal(f3BodyScope.getOwnReference('l').token.type, Syntax.Literal);
-            assert.equal(f3BodyScope.getOwnReference('l').token.value, 60);
-
             assert.isTrue(f3BodyScope.hasOwnReference('m'));
-            assert.equal(f3BodyScope.getOwnReference('m').token.type, Syntax.Literal);
-            assert.equal(f3BodyScope.getOwnReference('m').token.value, 70);
 
             var f3IfBodyScope = f3BodyScope.scopes[0];
 
@@ -448,12 +326,7 @@ describe('Processor.names', function() {
             assert.equal(f3IfBodyScope.scopes.length, 0);
 
             assert.isTrue(f3IfBodyScope.hasOwnReference('n'));
-            assert.equal(f3IfBodyScope.getOwnReference('n').token.type, Syntax.Literal);
-            assert.equal(f3IfBodyScope.getOwnReference('n').token.value, 80);
-
             assert.isTrue(f3IfBodyScope.hasOwnReference('a'));
-            assert.equal(f3IfBodyScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(f3IfBodyScope.getOwnReference('a').token.value, 90);
         });
 
         it('expression', function() {
@@ -471,13 +344,8 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 2);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('F1'));
-            assert.equal(rootScope.getOwnReference('F1').token.type, Syntax.FunctionExpression);
             assert.isTrue(rootScope.hasOwnReference('F3'));
-            assert.equal(rootScope.getOwnReference('F3').token.type, Syntax.FunctionExpression);
 
             var f1BodyScope = rootScope.scopes[0];
 
@@ -486,29 +354,18 @@ describe('Processor.names', function() {
             assert.equal(f1BodyScope.scopes.length, 1);
 
             assert.isTrue(f1BodyScope.hasOwnReference('F1Private'));
-            assert.equal(f1BodyScope.getOwnReference('F1Private').token.type, Syntax.FunctionExpression);
-            assert.strictEqual(f1BodyScope.getOwnReference('F1Private').token, rootScope.getOwnReference('F1').token);
-
             assert.isTrue(f1BodyScope.hasOwnReference('arguments'));
-            assert.equal(f1BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
 
             assert.isTrue(f1BodyScope.hasOwnReference('b'));
             assert.isTrue(f1BodyScope.getOwnReference('b').isArg);
-            assert.equal(f1BodyScope.getOwnReference('b').token.type, Syntax.Identifier);
             assert.equal(f1BodyScope.getOwnReference('b').argIndex, 0);
 
             assert.isTrue(f1BodyScope.hasOwnReference('c'));
             assert.isTrue(f1BodyScope.getOwnReference('c').isArg);
-            assert.equal(f1BodyScope.getOwnReference('c').token.type, Syntax.Identifier);
             assert.equal(f1BodyScope.getOwnReference('c').argIndex, 1);
 
             assert.isTrue(f1BodyScope.hasOwnReference('d'));
-            assert.equal(f1BodyScope.getOwnReference('d').token.type, Syntax.Literal);
-            assert.equal(f1BodyScope.getOwnReference('d').token.value, 20);
-
             assert.isTrue(f1BodyScope.hasOwnReference('e'));
-            assert.equal(f1BodyScope.getOwnReference('e').token.type, Syntax.Literal);
-            assert.equal(f1BodyScope.getOwnReference('e').token.value, 30);
 
             var f2BodyScope = f1BodyScope.scopes[0];
 
@@ -517,33 +374,19 @@ describe('Processor.names', function() {
             assert.equal(f2BodyScope.scopes.length, 0);
 
             assert.isTrue(f2BodyScope.hasOwnReference('F2Private'));
-            assert.equal(f2BodyScope.getOwnReference('F2Private').token.type, Syntax.FunctionExpression);
-            assert.strictEqual(f2BodyScope.getOwnReference('F2Private').token, f1BodyScope.getOwnReference('F2').token);
-
             assert.isTrue(f2BodyScope.hasReference('F1Private'));
-            assert.equal(f2BodyScope.getReference('F1Private').token.type, Syntax.FunctionExpression);
-            assert.strictEqual(f2BodyScope.getReference('F1Private').token, rootScope.getOwnReference('F1').token);
-
             assert.isTrue(f2BodyScope.hasOwnReference('arguments'));
-            assert.equal(f2BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
 
             assert.isTrue(f2BodyScope.hasOwnReference('f'));
             assert.isTrue(f2BodyScope.getOwnReference('f').isArg);
-            assert.equal(f2BodyScope.getOwnReference('f').token.type, Syntax.Identifier);
             assert.equal(f2BodyScope.getOwnReference('f').argIndex, 0);
 
             assert.isTrue(f2BodyScope.hasOwnReference('g'));
             assert.isTrue(f2BodyScope.getOwnReference('g').isArg);
-            assert.equal(f2BodyScope.getOwnReference('g').token.type, Syntax.Identifier);
             assert.equal(f2BodyScope.getOwnReference('g').argIndex, 1);
 
             assert.isTrue(f2BodyScope.hasOwnReference('h'));
-            assert.equal(f2BodyScope.getOwnReference('h').token.type, Syntax.Literal);
-            assert.equal(f2BodyScope.getOwnReference('h').token.value, 40);
-
             assert.isTrue(f2BodyScope.hasOwnReference('i'));
-            assert.equal(f2BodyScope.getOwnReference('i').token.type, Syntax.Literal);
-            assert.equal(f2BodyScope.getOwnReference('i').token.value, 50);
 
             var f3BodyScope = rootScope.scopes[1];
 
@@ -552,29 +395,18 @@ describe('Processor.names', function() {
             assert.equal(f3BodyScope.scopes.length, 1);
 
             assert.isTrue(f3BodyScope.hasOwnReference('F3Private'));
-            assert.equal(f3BodyScope.getOwnReference('F3Private').token.type, Syntax.FunctionExpression);
-            assert.strictEqual(f3BodyScope.getOwnReference('F3Private').token, rootScope.getOwnReference('F3').token);
-
             assert.isTrue(f3BodyScope.hasOwnReference('arguments'));
-            assert.equal(f3BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
 
             assert.isTrue(f3BodyScope.hasOwnReference('j'));
             assert.isTrue(f3BodyScope.getOwnReference('j').isArg);
-            assert.equal(f3BodyScope.getOwnReference('j').token.type, Syntax.Identifier);
             assert.equal(f3BodyScope.getOwnReference('j').argIndex, 0);
 
             assert.isTrue(f3BodyScope.hasOwnReference('k'));
             assert.isTrue(f3BodyScope.getOwnReference('k').isArg);
-            assert.equal(f3BodyScope.getOwnReference('k').token.type, Syntax.Identifier);
             assert.equal(f3BodyScope.getOwnReference('k').argIndex, 1);
 
             assert.isTrue(f3BodyScope.hasOwnReference('l'));
-            assert.equal(f3BodyScope.getOwnReference('l').token.type, Syntax.Literal);
-            assert.equal(f3BodyScope.getOwnReference('l').token.value, 60);
-
             assert.isTrue(f3BodyScope.hasOwnReference('m'));
-            assert.equal(f3BodyScope.getOwnReference('m').token.type, Syntax.Literal);
-            assert.equal(f3BodyScope.getOwnReference('m').token.value, 70);
 
             var f3IfBodyScope = f3BodyScope.scopes[0];
 
@@ -583,12 +415,7 @@ describe('Processor.names', function() {
             assert.equal(f3IfBodyScope.scopes.length, 0);
 
             assert.isTrue(f3IfBodyScope.hasOwnReference('n'));
-            assert.equal(f3IfBodyScope.getOwnReference('n').token.type, Syntax.Literal);
-            assert.equal(f3IfBodyScope.getOwnReference('n').token.value, 80);
-
             assert.isTrue(f3IfBodyScope.hasOwnReference('a'));
-            assert.equal(f3IfBodyScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(f3IfBodyScope.getOwnReference('a').token.value, 90);
         });
 
         it('iife', function() {
@@ -612,20 +439,10 @@ describe('Processor.names', function() {
             assert.equal(f1BodyScope.scopes.length, 2);
 
             assert.isTrue(f1BodyScope.hasOwnReference('F1'));
-            assert.equal(f1BodyScope.getOwnReference('F1').token.type, Syntax.FunctionExpression);
-
             assert.isTrue(f1BodyScope.hasOwnReference('F2'));
-            assert.equal(f1BodyScope.getOwnReference('F2').token.type, Syntax.FunctionDeclaration);
-
             assert.isTrue(f1BodyScope.hasOwnReference('F3'));
-            assert.equal(f1BodyScope.getOwnReference('F3').token.type, Syntax.FunctionExpression);
-
             assert.isTrue(f1BodyScope.hasOwnReference('arguments'));
-            assert.equal(f1BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
-
             assert.isTrue(f1BodyScope.hasOwnReference('a'));
-            assert.equal(f1BodyScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(f1BodyScope.getOwnReference('a').token.value, 10);
 
             var f2BodyScope = f1BodyScope.scopes[0];
 
@@ -640,29 +457,18 @@ describe('Processor.names', function() {
             assert.equal(f3BodyScope.scopes.length, 1);
 
             assert.isTrue(f3BodyScope.hasOwnReference('F3Private'));
-            assert.equal(f3BodyScope.getOwnReference('F3Private').token.type, Syntax.FunctionExpression);
-            assert.strictEqual(f3BodyScope.getOwnReference('F3Private').token, f1BodyScope.getOwnReference('F3').token);
-
             assert.isTrue(f3BodyScope.hasOwnReference('arguments'));
-            assert.equal(f3BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
 
             assert.isTrue(f3BodyScope.hasOwnReference('j'));
             assert.isTrue(f3BodyScope.getOwnReference('j').isArg);
-            assert.equal(f3BodyScope.getOwnReference('j').token.type, Syntax.Identifier);
             assert.equal(f3BodyScope.getOwnReference('j').argIndex, 0);
 
             assert.isTrue(f3BodyScope.hasOwnReference('k'));
             assert.isTrue(f3BodyScope.getOwnReference('k').isArg);
-            assert.equal(f3BodyScope.getOwnReference('k').token.type, Syntax.Identifier);
             assert.equal(f3BodyScope.getOwnReference('k').argIndex, 1);
 
             assert.isTrue(f3BodyScope.hasOwnReference('l'));
-            assert.equal(f3BodyScope.getOwnReference('l').token.type, Syntax.Literal);
-            assert.equal(f3BodyScope.getOwnReference('l').token.value, 60);
-
             assert.isTrue(f3BodyScope.hasOwnReference('m'));
-            assert.equal(f3BodyScope.getOwnReference('m').token.type, Syntax.Literal);
-            assert.equal(f3BodyScope.getOwnReference('m').token.value, 70);
 
             var f3IfBodyScope = f3BodyScope.scopes[0];
 
@@ -671,12 +477,7 @@ describe('Processor.names', function() {
             assert.equal(f3IfBodyScope.scopes.length, 0);
 
             assert.isTrue(f3IfBodyScope.hasOwnReference('n'));
-            assert.equal(f3IfBodyScope.getOwnReference('n').token.type, Syntax.Literal);
-            assert.equal(f3IfBodyScope.getOwnReference('n').token.value, 80);
-
             assert.isTrue(f3IfBodyScope.hasOwnReference('a'));
-            assert.equal(f3IfBodyScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(f3IfBodyScope.getOwnReference('a').token.value, 90);
         });
 
         it('arrow function', function() {
@@ -700,20 +501,11 @@ describe('Processor.names', function() {
             assert.equal(f1BodyScope.scopes.length, 2);
 
             assert.isTrue(f1BodyScope.hasOwnReference('F1'));
-            assert.equal(f1BodyScope.getOwnReference('F1').token.type, Syntax.FunctionExpression);
-
             assert.isTrue(f1BodyScope.hasOwnReference('F2'));
-            assert.equal(f1BodyScope.getOwnReference('F2').token.type, Syntax.ArrowFunctionExpression);
-
             assert.isTrue(f1BodyScope.hasOwnReference('F3'));
-            assert.equal(f1BodyScope.getOwnReference('F3').token.type, Syntax.ArrowFunctionExpression);
-
             assert.isTrue(f1BodyScope.hasOwnReference('arguments'));
-            assert.equal(f1BodyScope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
 
             assert.isTrue(f1BodyScope.hasOwnReference('a'));
-            assert.equal(f1BodyScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(f1BodyScope.getOwnReference('a').token.value, 10);
 
             var f2BodyScope = f1BodyScope.scopes[0];
 
@@ -732,21 +524,14 @@ describe('Processor.names', function() {
 
             assert.isTrue(f3BodyScope.hasOwnReference('j'));
             assert.isTrue(f3BodyScope.getOwnReference('j').isArg);
-            assert.equal(f3BodyScope.getOwnReference('j').token.type, Syntax.Identifier);
             assert.equal(f3BodyScope.getOwnReference('j').argIndex, 0);
 
             assert.isTrue(f3BodyScope.hasOwnReference('k'));
             assert.isTrue(f3BodyScope.getOwnReference('k').isArg);
-            assert.equal(f3BodyScope.getOwnReference('k').token.type, Syntax.Identifier);
             assert.equal(f3BodyScope.getOwnReference('k').argIndex, 1);
 
             assert.isTrue(f3BodyScope.hasOwnReference('l'));
-            assert.equal(f3BodyScope.getOwnReference('l').token.type, Syntax.Literal);
-            assert.equal(f3BodyScope.getOwnReference('l').token.value, 60);
-
             assert.isTrue(f3BodyScope.hasOwnReference('m'));
-            assert.equal(f3BodyScope.getOwnReference('m').token.type, Syntax.Literal);
-            assert.equal(f3BodyScope.getOwnReference('m').token.value, 70);
 
             var f3IfBodyScope = f3BodyScope.scopes[0];
 
@@ -755,12 +540,7 @@ describe('Processor.names', function() {
             assert.equal(f3IfBodyScope.scopes.length, 0);
 
             assert.isTrue(f3IfBodyScope.hasOwnReference('n'));
-            assert.equal(f3IfBodyScope.getOwnReference('n').token.type, Syntax.Literal);
-            assert.equal(f3IfBodyScope.getOwnReference('n').token.value, 80);
-
             assert.isTrue(f3IfBodyScope.hasOwnReference('a'));
-            assert.equal(f3IfBodyScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(f3IfBodyScope.getOwnReference('a').token.value, 90);
         });
 
     });
@@ -778,18 +558,9 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 1);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('C1'));
-            assert.equal(rootScope.getOwnReference('C1').token.type, Syntax.ClassDeclaration);
 
             var classScope = rootScope.scopes[0];
-
-            assert.deepProperty(classScope.token, 'methods.m1.isMethod');
-            assert.deepProperty(classScope.token, 'methods.m2.isMethod');
-            assert.equal(classScope.token.methods.m1.methodName.name, 'm1');
-            assert.equal(classScope.token.methods.m2.methodName.name, 'm2');
 
             assert.equal(classScope.countReferences(), 2);
             assert.equal(classScope.countOwnReferences(), 0);
@@ -802,11 +573,7 @@ describe('Processor.names', function() {
             assert.equal(m1Scope.scopes.length, 0);
 
             assert.isTrue(m1Scope.hasOwnReference('arguments'));
-            assert.equal(m1Scope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
-
             assert.isTrue(m1Scope.hasOwnReference('b'));
-            assert.equal(m1Scope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(m1Scope.getOwnReference('b').token.value, 20);
 
             var m2Scope = classScope.scopes[1];
 
@@ -815,11 +582,7 @@ describe('Processor.names', function() {
             assert.equal(m2Scope.scopes.length, 0);
 
             assert.isTrue(m2Scope.hasOwnReference('arguments'));
-            assert.equal(m2Scope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
-
             assert.isTrue(m2Scope.hasOwnReference('c'));
-            assert.equal(m2Scope.getOwnReference('c').token.type, Syntax.Literal);
-            assert.equal(m2Scope.getOwnReference('c').token.value, 30);
         });
 
         it('expression', function() {
@@ -834,26 +597,14 @@ describe('Processor.names', function() {
             assert.equal(rootScope.scopes.length, 1);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
-            assert.equal(rootScope.getOwnReference('a').token.type, Syntax.Literal);
-            assert.equal(rootScope.getOwnReference('a').token.value, 10);
-
             assert.isTrue(rootScope.hasOwnReference('C1'));
-            assert.equal(rootScope.getOwnReference('C1').token.type, Syntax.ClassExpression);
 
             var classScope = rootScope.scopes[0];
-
-            assert.deepProperty(classScope.token, 'methods.m1.isMethod');
-            assert.deepProperty(classScope.token, 'methods.m2.isMethod');
-            assert.equal(classScope.token.methods.m1.methodName.name, 'm1');
-            assert.equal(classScope.token.methods.m2.methodName.name, 'm2');
 
             assert.equal(classScope.countReferences(), 3);
             assert.equal(classScope.countOwnReferences(), 1);
             assert.equal(classScope.scopes.length, 2);
-
             assert.isTrue(classScope.hasOwnReference('C1Private'));
-            assert.equal(classScope.getOwnReference('C1Private').token.type, Syntax.ClassExpression);
-            assert.strictEqual(classScope.getOwnReference('C1Private').token, rootScope.getOwnReference('C1').token);
 
             var m1Scope = classScope.scopes[0];
 
@@ -862,11 +613,7 @@ describe('Processor.names', function() {
             assert.equal(m1Scope.scopes.length, 0);
 
             assert.isTrue(m1Scope.hasOwnReference('arguments'));
-            assert.equal(m1Scope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
-
             assert.isTrue(m1Scope.hasOwnReference('b'));
-            assert.equal(m1Scope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(m1Scope.getOwnReference('b').token.value, 20);
 
             var m2Scope = classScope.scopes[1];
 
@@ -875,11 +622,7 @@ describe('Processor.names', function() {
             assert.equal(m2Scope.scopes.length, 0);
 
             assert.isTrue(m2Scope.hasOwnReference('arguments'));
-            assert.equal(m2Scope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
-
             assert.isTrue(m2Scope.hasOwnReference('c'));
-            assert.equal(m2Scope.getOwnReference('c').token.type, Syntax.Literal);
-            assert.equal(m2Scope.getOwnReference('c').token.value, 30);
         });
 
         it('hoisting', function() {
@@ -902,11 +645,6 @@ describe('Processor.names', function() {
 
             var classScope = ifScope.scopes[0];
 
-            assert.deepProperty(classScope.token, 'methods.m1.isMethod');
-            assert.deepProperty(classScope.token, 'methods.m2.isMethod');
-            assert.equal(classScope.token.methods.m1.methodName.name, 'm1');
-            assert.equal(classScope.token.methods.m2.methodName.name, 'm2');
-
             assert.equal(classScope.countReferences(), 1);
             assert.equal(classScope.countOwnReferences(), 0);
             assert.equal(classScope.scopes.length, 2);
@@ -918,11 +656,7 @@ describe('Processor.names', function() {
             assert.equal(m1Scope.scopes.length, 0);
 
             assert.isTrue(m1Scope.hasOwnReference('arguments'));
-            assert.equal(m1Scope.getOwnReference('arguments').token.type, Syntax.ObjectExpression);
-
             assert.isTrue(m1Scope.hasOwnReference('b'));
-            assert.equal(m1Scope.getOwnReference('b').token.type, Syntax.Literal);
-            assert.equal(m1Scope.getOwnReference('b').token.value, 20);
         });
     });
 });
