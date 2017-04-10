@@ -34,6 +34,20 @@ describe('Utils.AST', function() {
         });
     });
 
+    it('#getFirstExpression', function() {
+        var token1 = utils.ast.getFirstExpression(esprima.parse('function a(){var b;}'));
+        var token2 = utils.ast.getFirstExpression(token1.body);
+        var token3 = utils.ast.getFirstExpression(esprima.parse('class A{ m(){} }'));
+        var token4 = utils.ast.getFirstExpression(token3);
+        var token5 = utils.ast.getFirstExpression(token3.body);
+
+        assert.equal(token1.type, Syntax.FunctionDeclaration);
+        assert.equal(token2.type, Syntax.VariableDeclaration);
+        assert.equal(token3.type, Syntax.ClassDeclaration);
+        assert.isNull(token4);
+        assert.equal(token5.type, Syntax.MethodDefinition);
+    });
+
     it('#isFunction', function() {
         var token1 = esprima.parse('function a(){}').body[0];
         var token2 = esprima.parse('(function(){})').body[0].expression;
