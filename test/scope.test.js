@@ -43,7 +43,9 @@ describe('Scope', function() {
             var childScope1 = new Scope(rootScope);
             var childScope2 = new Scope(childScope1);
 
-            rootScope.setReference('a', 'someValue');
+            var reference = rootScope.setReference('a', 'someValue');
+
+            assert.strictEqual(reference, 'someValue');
             assert.isTrue(rootScope.hasReference('a'));
             assert.isTrue(rootScope.hasOwnReference('a'));
             assert.equal(rootScope.getReference('a'), 'someValue');
@@ -116,6 +118,20 @@ describe('Scope', function() {
             assert.isNull(rootScope.getReference('b'));
             assert.equal(rootScope.countReferences(), 1);
             assert.equal(rootScope.countOwnReferences(), 1);
+
+            childScope2.removeOwnReference('a');
+            assert.equal(childScope2.countReferences(), 2);
+            assert.equal(childScope2.countOwnReferences(), 1);
+            assert.sameMembers(childScope2.getReferenceNames(), ['a', 'b']);
+            assert.sameMembers(childScope2.getOwnReferenceNames(), ['b']);
+            assert.equal(childScope1.countReferences(), 1);
+            assert.equal(childScope1.countOwnReferences(), 1);
+            assert.sameMembers(childScope1.getReferenceNames(), ['a']);
+            assert.sameMembers(childScope1.getOwnReferenceNames(), ['a']);
+            assert.equal(rootScope.countReferences(), 1);
+            assert.equal(rootScope.countOwnReferences(), 1);
+            assert.sameMembers(rootScope.getReferenceNames(), ['a']);
+            assert.sameMembers(rootScope.getOwnReferenceNames(), ['a']);
 
             childScope2.removeOwnReference('b');
             assert.equal(childScope2.countReferences(), 1);
