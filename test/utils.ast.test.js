@@ -91,4 +91,8 @@ describe('Utils.AST', function() {
     it('#parse', function() {
         assert.deepEqual(utils.ast.parse('var a = 10'), esprima.parse('var a = 10').body[0]);
     });
+
+    it('#translate', function() {
+        assert.equal(utils.ast.translate(utils.ast.parse('var a = 10;')), 'var a = 10;');
+    });
 });
