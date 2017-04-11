@@ -300,6 +300,79 @@ describe('Processor.values', function() {
             assert.equal(rootScope.getReference('a').token.type, Syntax.Identifier);
             assert.equal(rootScope.getReference('a').token.name, 'undefined');
         });
+
+        it('multi assignment - literal;', function() {
+            var code = 'a = b = c = 1';
+            var ast = esprima.parse(code);
+            var result;
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            result = resolver.resolveToken(rootScope.getReference('a').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 1);
+
+            result = resolver.resolveToken(rootScope.getReference('b').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 1);
+
+            result = resolver.resolveToken(rootScope.getReference('c').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 1);
+        });
+
+        it('multi assignment - identifier;', function() {
+            var code = 'a = 1; b = c = d = a';
+            var ast = esprima.parse(code);
+            var result;
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            result = resolver.resolveToken(rootScope.getReference('a').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 1);
+
+            result = resolver.resolveToken(rootScope.getReference('b').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 1);
+
+            result = resolver.resolveToken(rootScope.getReference('c').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 1);
+
+            result = resolver.resolveToken(rootScope.getReference('d').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 1);
+        });
+
+        it('multi assignment - member expression', function() {
+            var code = 'var obj = { a: { b: 1 } }; a = b = obj.a.b = c = 10; d = obj.a.b';
+            var ast = esprima.parse(code);
+            var result;
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.deepEqual(rootScope.getReference('obj').token.obj, { a: { b: 10 } });
+
+            result = resolver.resolveToken(rootScope.getReference('a').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 10);
+
+            result = resolver.resolveToken(rootScope.getReference('b').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 10);
+
+            result = resolver.resolveToken(rootScope.getReference('c').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 10);
+
+            result = resolver.resolveToken(rootScope.getReference('d').token);
+            assert.isTrue(result.resolved);
+            assert.strictEqual(result.value, 10);
+        });
     });
 
     describe('object expression', function() {
