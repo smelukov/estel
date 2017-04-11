@@ -1,3 +1,10 @@
+## 0.3.0 (April 11, 2017)
+
+- add valueResolver that handles ObjectExpression and resolves tokens
+- support ObjectExpression (#3)
+- support MemberExpression (#2)
+- support multi Assignment (#5)
+
 ## 0.2.0 (April 10, 2017)
 
 - names processor do not handle the tokens

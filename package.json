@@ -1,6 +1,6 @@
 {
   "name": "estel",
-  "version": "0.1.2",
+  "version": "0.3.0",
   "description": "",
   "scripts": {
     "test": "mocha test/*.test.js",
