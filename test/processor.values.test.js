@@ -303,6 +303,254 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('c').value, 10);
             assert.strictEqual(rootScope.getReference('d').value, 10);
         });
+
+        describe('binary expression', function() {
+            it('assignment from binary expression - literal', function() {
+                var code = '\
+                    var a = 2 + 3;\
+                    var b = 2 - 3;\
+                    var c = 2 * 3;\
+                    var d = 2 / 3;\
+                    var e = 2 % 3;\
+                    var f = 2 ** 3;\
+                    var g = 2 << 3;\
+                    var h = 2 >> 3;\
+                    var i = 2 >>> 3;\
+                    var j = 2 & 3;\
+                    var k = 2 | 3;\
+                    var l = 2 ^ 3;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            });
+
+            it('assignment from binary expression - identifier', function() {
+                var code = '\
+                    var left = 2;\
+                    var right = 3;\
+                    var a = left + right;\
+                    var b = left - right;\
+                    var c = left * right;\
+                    var d = left / right;\
+                    var e = left % right;\
+                    var f = left ** right;\
+                    var g = left << right;\
+                    var h = left >> right;\
+                    var i = left >>> right;\
+                    var j = left & right;\
+                    var k = left | right;\
+                    var l = left ^ right;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            });
+
+            it('assignment from binary expression - member expression', function() {
+                var code = '\
+                    var obj = { a: { b: { c: { d: 2 } } } };\
+                    var right = 3;\
+                    var a = obj.a.b.c.d + right;\
+                    var b = obj.a.b.c.d - right;\
+                    var c = obj.a.b.c.d * right;\
+                    var d = obj.a.b.c.d / right;\
+                    var e = obj.a.b.c.d % right;\
+                    var f = obj.a.b.c.d ** right;\
+                    var g = obj.a.b.c.d << right;\
+                    var h = obj.a.b.c.d >> right;\
+                    var i = obj.a.b.c.d >>> right;\
+                    var j = obj.a.b.c.d & right;\
+                    var k = obj.a.b.c.d | right;\
+                    var l = obj.a.b.c.d ^ right;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            });
+
+            it('assignment from binary expression - dynamic member expression', function() {
+                var code = '\
+                    var right = 3;\
+                    var a = { a: { b: { c: 2 } } }.a.b.c + right;\
+                    var b = { a: { b: { c: 2 } } }.a.b.c - right;\
+                    var c = { a: { b: { c: 2 } } }.a.b.c * right;\
+                    var d = { a: { b: { c: 2 } } }.a.b.c / right;\
+                    var e = { a: { b: { c: 2 } } }.a.b.c % right;\
+                    var f = { a: { b: { c: 2 } } }.a.b.c ** right;\
+                    var g = { a: { b: { c: 2 } } }.a.b.c << right;\
+                    var h = { a: { b: { c: 2 } } }.a.b.c >> right;\
+                    var i = { a: { b: { c: 2 } } }.a.b.c >>> right;\
+                    var j = { a: { b: { c: 2 } } }.a.b.c & right;\
+                    var k = { a: { b: { c: 2 } } }.a.b.c | right;\
+                    var l = { a: { b: { c: 2 } } }.a.b.c ^ right;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            });
+
+            it('assignment from multi binary expression - literal', function() {
+                var code = '\
+                    var a = (1 + 1) + (2 + 1);\
+                    var b = (1 + 1) - (2 + 1);\
+                    var c = (1 + 1) * (2 + 1);\
+                    var d = (1 + 1) / (2 + 1);\
+                    var e = (1 + 1) % (2 + 1);\
+                    var f = (1 + 1) ** (2 + 1);\
+                    var g = (1 + 1) << (2 + 1);\
+                    var h = (1 + 1) >> (2 + 1);\
+                    var i = (1 + 1) >>> (2 + 1);\
+                    var j = (1 + 1) & (2 + 1);\
+                    var k = (1 + 1) | (2 + 1);\
+                    var l = (1 + 1) ^ (2 + 1);\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            });
+
+            it('assignment from multi binary expression - identifier', function() {
+                var code = '\
+                    var one = 1;\
+                    var two = 2;\
+                    var a = (one + one) + (two + one);\
+                    var b = (one + one) - (two + one);\
+                    var c = (one + one) * (two + one);\
+                    var d = (one + one) / (two + one);\
+                    var e = (one + one) % (two + one);\
+                    var f = (one + one) ** (two + one);\
+                    var g = (one + one) << (two + one);\
+                    var h = (one + one) >> (two + one);\
+                    var i = (one + one) >>> (two + one);\
+                    var j = (one + one) & (two + one);\
+                    var k = (one + one) | (two + one);\
+                    var l = (one + one) ^ (two + one);\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            });
+
+            it('assignment from multi binary expression - dynamic member expression', function() {
+                var code = '\
+                    var right = 3;\
+                    var a = ({ a: { b: { c: 1 } } }.a.b.c + 1) + right;\
+                    var b = ({ a: { b: { c: 1 } } }.a.b.c + 1) - right;\
+                    var c = ({ a: { b: { c: 1 } } }.a.b.c + 1) * right;\
+                    var d = ({ a: { b: { c: 1 } } }.a.b.c + 1) / right;\
+                    var e = ({ a: { b: { c: 1 } } }.a.b.c + 1) % right;\
+                    var f = ({ a: { b: { c: 1 } } }.a.b.c + 1) ** right;\
+                    var g = ({ a: { b: { c: 1 } } }.a.b.c + 1) << right;\
+                    var h = ({ a: { b: { c: 1 } } }.a.b.c + 1) >> right;\
+                    var i = ({ a: { b: { c: 1 } } }.a.b.c + 1) >>> right;\
+                    var j = ({ a: { b: { c: 1 } } }.a.b.c + 1) & right;\
+                    var k = ({ a: { b: { c: 1 } } }.a.b.c + 1) | right;\
+                    var l = ({ a: { b: { c: 1 } } }.a.b.c + 1) ^ right;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            });
+        });
     });
 
     describe('object expression', function() {
