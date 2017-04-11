@@ -16,7 +16,6 @@
 let Scope = require('estel').Scope;
 let processNames = require('estel').processNames;
 let processValues = require('estel').processValues;
-let resolver = require('estel').valueResolver;
 let parser = require('estel').parser;
 
 let scope = new Scope();
@@ -25,20 +24,29 @@ let ast = parser.parse(`
     var obj = { prop1: 1, prop2: { prop3: 2, prop4: 3 } };
     var value = obj.prop2.prop4;
     
-    if(1) { var soveVar; let someLet; }
+    obj.prop2.prop4 = 4;
+    
+    var value2 = obj.prop2.prop4;
+    
+    if(1) { var someVar; let someLet; }
     function Fn(param1, param2) { var someOtherVar = 20 }`);
 
 processNames(ast, scope);
 
-console.log(scope.getOwnReferenceNames()); // ['number', 'obj', 'value', 'soveVar, 'Fn']
-console.log(scope.scopes[0].getOwnReferenceNames()); // ['someLet']
-console.log(scope.scopes[1].getOwnReferenceNames()); // ['arguments', 'param1', 'param2', 'someOtherVar']
+let ifScope = scope.scopes[0];
+let fnScope = scope.scopes[1];
+
+console.log(scope.getOwnReferenceNames()); // ['number', 'obj', 'value', 'someVar, 'Fn']
+console.log(ifScope.getOwnReferenceNames()); // ['someLet']
+console.log(fnScope.getOwnReferenceNames()); // ['arguments', 'param1', 'param2', 'someOtherVar']
 
 processValues(ast);
 
-let numberToken = scope.getReference('number').token;
-let valueToken = scope.getReference('value').token;
+let numberRef = scope.getReference('number');
+let valueRef = scope.getReference('value');
+let value2Ref = scope.getReference('value2');
 
-console.log(numberToken.value); // 10
-console.log(resolver.resolveToken(valueToken)); // { resolved: true, value: 3 }
+console.log(numberRef.value); // 10
+console.log(valueRef.value); // 3
+console.log(value2Ref.value); // 4
 ```
