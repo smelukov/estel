@@ -550,6 +550,41 @@ describe('Processor.values', function() {
                 assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
                 assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
             });
+
+            it('assignment from undefined binary expression', function() {
+                var code = '\
+                    var right = 3;\
+                    var a = (some1 + some2) + right;\
+                    var b = (some1 + some2) - right;\
+                    var c = (some1 + some2) * right;\
+                    var d = (some1 + some2) / right;\
+                    var e = (some1 + some2) % right;\
+                    var f = (some1 + some2) ** right;\
+                    var g = (some1 + some2) << right;\
+                    var h = (some1 + some2) >> right;\
+                    var i = (some1 + some2) >>> right;\
+                    var j = (some1 + some2) & right;\
+                    var k = (some1 + some2) | right;\
+                    var l = (some1 + some2) ^ right;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.isUndefined(rootScope.getReference('a').value);
+                assert.isUndefined(rootScope.getReference('b').value);
+                assert.isUndefined(rootScope.getReference('c').value);
+                assert.isUndefined(rootScope.getReference('d').value);
+                assert.isUndefined(rootScope.getReference('e').value);
+                assert.isUndefined(rootScope.getReference('f').value);
+                assert.isUndefined(rootScope.getReference('g').value);
+                assert.isUndefined(rootScope.getReference('h').value);
+                assert.isUndefined(rootScope.getReference('i').value);
+                assert.isUndefined(rootScope.getReference('j').value);
+                assert.isUndefined(rootScope.getReference('k').value);
+                assert.isUndefined(rootScope.getReference('l').value);
+            });
         });
     });
 
