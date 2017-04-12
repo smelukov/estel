@@ -306,9 +306,8 @@ describe('Processor.values', function() {
     });
 
     describe('binary expression', function() {
-        describe('binary expression', function() {
-            it('assignment from binary expression - literal', function() {
-                var code = '\
+        it('literal', function() {
+            var code = '\
                     var a = 2 + 3;\
                     var b = 2 - 3;\
                     var c = 2 * 3;\
@@ -331,36 +330,36 @@ describe('Processor.values', function() {
                     var t = 2 >= 3;\
                     var u = 2 in { 2: 3 };\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
-                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
-                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
-                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
-                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
-                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
-                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
-                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
-                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
-                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
-                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
-                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
-                assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
-                assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
-                assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
-                assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
-                assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
-                assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
-                assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
-                assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-                assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
-            });
+            assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+            assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+            assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+            assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+            assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+            assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+            assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+            assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+            assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+            assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+            assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+            assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
+            assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
+            assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
+            assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
+            assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
+            assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
+            assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
+            assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
+        });
 
-            it('assignment from binary expression - identifier', function() {
-                var code = '\
+        it('identifier', function() {
+            var code = '\
                     var left = 2;\
                     var right = 3;\
                     var a = left + right;\
@@ -385,36 +384,36 @@ describe('Processor.values', function() {
                     var t = left >= right;\
                     var u = left in { [left]: right };\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
-                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
-                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
-                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
-                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
-                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
-                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
-                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
-                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
-                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
-                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
-                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
-                assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
-                assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
-                assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
-                assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
-                assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
-                assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
-                assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
-                assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-                assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
-            });
+            assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+            assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+            assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+            assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+            assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+            assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+            assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+            assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+            assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+            assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+            assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+            assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
+            assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
+            assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
+            assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
+            assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
+            assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
+            assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
+            assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
+        });
 
-            it('assignment from binary expression - member expression', function() {
-                var code = '\
+        it('member expression', function() {
+            var code = '\
                     var obj = { a: { b: { c: { d: 2 } } } };\
                     var right = 3;\
                     var a = obj.a.b.c.d + right;\
@@ -439,36 +438,38 @@ describe('Processor.values', function() {
                     var t = obj.a.b.c.d >= right;\
                     var u = obj.a.b.c.d in { 2: right };\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
-                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
-                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
-                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
-                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
-                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
-                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
-                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
-                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
-                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
-                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
-                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
-                assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
-                assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
-                assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
-                assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
-                assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
-                assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
-                assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
-                assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-                assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
-            });
+            assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+            assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+            assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+            assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+            assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+            assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+            assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+            assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+            assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+            assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+            assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+            assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
+            assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
+            assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
+            assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
+            assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
+            assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
+            assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
+            assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
+        });
 
-            it('assignment from binary expression - dynamic member expression', function() {
-                var code = '\
+        // todo computed member expression
+
+        it('object + member expression', function() {
+            var code = '\
                     var right = 3;\
                     var a = { a: { b: { c: 2 } } }.a.b.c + right;\
                     var b = { a: { b: { c: 2 } } }.a.b.c - right;\
@@ -492,36 +493,36 @@ describe('Processor.values', function() {
                     var t = { a: { b: { c: 2 } } }.a.b.c >= right;\
                     var u = { a: { b: { c: 2 } } }.a.b.c in { 2: right };\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
-                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
-                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
-                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
-                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
-                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
-                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
-                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
-                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
-                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
-                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
-                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
-                assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
-                assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
-                assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
-                assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
-                assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
-                assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
-                assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
-                assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-                assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
-            });
+            assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+            assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+            assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+            assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+            assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+            assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+            assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+            assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+            assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+            assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+            assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+            assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
+            assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
+            assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
+            assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
+            assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
+            assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
+            assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
+            assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
+        });
 
-            it('assignment from multi binary expression - literal', function() {
-                var code = '\
+        it('multi binary expression - literal', function() {
+            var code = '\
                     var a = (1 + 1) + (2 + 1);\
                     var b = (1 + 1) - (2 + 1);\
                     var c = (1 + 1) * (2 + 1);\
@@ -544,36 +545,36 @@ describe('Processor.values', function() {
                     var t = (1 + 1) >= (2 + 1);\
                     var u = (1 + 1) in { 2: 3 };\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
-                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
-                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
-                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
-                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
-                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
-                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
-                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
-                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
-                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
-                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
-                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
-                assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
-                assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
-                assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
-                assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
-                assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
-                assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
-                assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
-                assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-                assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
-            });
+            assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+            assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+            assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+            assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+            assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+            assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+            assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+            assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+            assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+            assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+            assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+            assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
+            assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
+            assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
+            assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
+            assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
+            assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
+            assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
+            assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
+        });
 
-            it('assignment from multi binary expression - identifier', function() {
-                var code = '\
+        it('multi binary expression - identifier', function() {
+            var code = '\
                     var one = 1;\
                     var two = 2;\
                     var a = (one + one) + (two + one);\
@@ -598,36 +599,36 @@ describe('Processor.values', function() {
                     var t = (one + one) >= (two + one);\
                     var u = (one + one) in { [one + one]: two + one };\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
-                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
-                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
-                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
-                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
-                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
-                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
-                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
-                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
-                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
-                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
-                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
-                assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
-                assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
-                assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
-                assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
-                assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
-                assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
-                assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
-                assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-                assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
-            });
+            assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+            assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+            assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+            assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+            assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+            assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+            assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+            assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+            assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+            assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+            assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+            assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
+            assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
+            assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
+            assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
+            assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
+            assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
+            assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
+            assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
+        });
 
-            it('assignment from multi binary expression - dynamic member expression', function() {
-                var code = '\
+        it('multi binary expression - object + member expression', function() {
+            var code = '\
                     var right = 3;\
                     var a = ({ a: { b: { c: 1 } } }.a.b.c + 1) + right;\
                     var b = ({ a: { b: { c: 1 } } }.a.b.c + 1) - right;\
@@ -651,36 +652,36 @@ describe('Processor.values', function() {
                     var t = ({ a: { b: { c: 1 } } }.a.b.c + 1) >= right;\
                     var u = ({ a: { b: { c: 1 } } }.a.b.c + 1) in { 2: right };\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
-                assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
-                assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
-                assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
-                assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
-                assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
-                assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
-                assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
-                assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
-                assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
-                assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
-                assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
-                assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
-                assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
-                assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
-                assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
-                assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
-                assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
-                assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
-                assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-                assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
-            });
+            assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+            assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+            assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+            assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+            assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+            assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+            assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+            assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+            assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+            assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+            assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+            assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
+            assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
+            assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
+            assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
+            assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
+            assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
+            assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
+            assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
+        });
 
-            it('assignment from undefined binary expression', function() {
-                var code = '\
+        it('undefined binary expression', function() {
+            var code = '\
                     var right = 3;\
                     var a = (some1 + some2) + right;\
                     var b = (some1 + some2) - right;\
@@ -704,33 +705,32 @@ describe('Processor.values', function() {
                     var t = (some1 + some2) >= right;\
                     var u = (some1 + some2) in { 2: right };\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.isUndefined(rootScope.getReference('a').value);
-                assert.isUndefined(rootScope.getReference('b').value);
-                assert.isUndefined(rootScope.getReference('c').value);
-                assert.isUndefined(rootScope.getReference('d').value);
-                assert.isUndefined(rootScope.getReference('e').value);
-                assert.isUndefined(rootScope.getReference('f').value);
-                assert.isUndefined(rootScope.getReference('g').value);
-                assert.isUndefined(rootScope.getReference('h').value);
-                assert.isUndefined(rootScope.getReference('i').value);
-                assert.isUndefined(rootScope.getReference('j').value);
-                assert.isUndefined(rootScope.getReference('k').value);
-                assert.isUndefined(rootScope.getReference('l').value);
-                assert.isUndefined(rootScope.getReference('m').value);
-                assert.isUndefined(rootScope.getReference('n').value);
-                assert.isUndefined(rootScope.getReference('o').value);
-                assert.isUndefined(rootScope.getReference('p').value);
-                assert.isUndefined(rootScope.getReference('q').value);
-                assert.isUndefined(rootScope.getReference('r').value);
-                assert.isUndefined(rootScope.getReference('s').value);
-                assert.isUndefined(rootScope.getReference('t').value);
-                assert.isUndefined(rootScope.getReference('u').value);
-            });
+            assert.isUndefined(rootScope.getReference('a').value);
+            assert.isUndefined(rootScope.getReference('b').value);
+            assert.isUndefined(rootScope.getReference('c').value);
+            assert.isUndefined(rootScope.getReference('d').value);
+            assert.isUndefined(rootScope.getReference('e').value);
+            assert.isUndefined(rootScope.getReference('f').value);
+            assert.isUndefined(rootScope.getReference('g').value);
+            assert.isUndefined(rootScope.getReference('h').value);
+            assert.isUndefined(rootScope.getReference('i').value);
+            assert.isUndefined(rootScope.getReference('j').value);
+            assert.isUndefined(rootScope.getReference('k').value);
+            assert.isUndefined(rootScope.getReference('l').value);
+            assert.isUndefined(rootScope.getReference('m').value);
+            assert.isUndefined(rootScope.getReference('n').value);
+            assert.isUndefined(rootScope.getReference('o').value);
+            assert.isUndefined(rootScope.getReference('p').value);
+            assert.isUndefined(rootScope.getReference('q').value);
+            assert.isUndefined(rootScope.getReference('r').value);
+            assert.isUndefined(rootScope.getReference('s').value);
+            assert.isUndefined(rootScope.getReference('t').value);
+            assert.isUndefined(rootScope.getReference('u').value);
         });
 
         describe('in', function() {
@@ -788,10 +788,11 @@ describe('Processor.values', function() {
                 assert.isFalse(rootScope.getReference('a').value);
             });
         });
+    });
 
-        describe('unary expression', function() {
-            it('assignment from unary expression - literal', function() {
-                var code = '\
+    describe('unary expression', function() {
+        it('literal', function() {
+            var code = '\
                     var a = -1;\
                     var b = -(-1);\
                     var c = +1;\
@@ -802,24 +803,24 @@ describe('Processor.values', function() {
                     var h = typeof 1;\
                     var i = void 1;\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, -1);
-                assert.strictEqual(rootScope.getReference('b').value, -(-1));
-                assert.strictEqual(rootScope.getReference('c').value, +1);
-                assert.strictEqual(rootScope.getReference('d').value, +-1);
-                assert.strictEqual(rootScope.getReference('e').value, !1);
-                assert.strictEqual(rootScope.getReference('f').value, !!1);
-                assert.strictEqual(rootScope.getReference('g').value, ~1);
-                assert.strictEqual(rootScope.getReference('h').value, typeof 1);
-                assert.strictEqual(rootScope.getReference('i').value, void 1);
-            });
+            assert.strictEqual(rootScope.getReference('a').value, -1);
+            assert.strictEqual(rootScope.getReference('b').value, -(-1));
+            assert.strictEqual(rootScope.getReference('c').value, +1);
+            assert.strictEqual(rootScope.getReference('d').value, +-1);
+            assert.strictEqual(rootScope.getReference('e').value, !1);
+            assert.strictEqual(rootScope.getReference('f').value, !!1);
+            assert.strictEqual(rootScope.getReference('g').value, ~1);
+            assert.strictEqual(rootScope.getReference('h').value, typeof 1);
+            assert.strictEqual(rootScope.getReference('i').value, void 1);
+        });
 
-            it('assignment from unary expression - identifier', function() {
-                var code = '\
+        it('identifier', function() {
+            var code = '\
                     var one = 1;\
                     var a = -one;\
                     var b = -(-one);\
@@ -831,24 +832,24 @@ describe('Processor.values', function() {
                     var h = typeof one;\
                     var i = void one;\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, -1);
-                assert.strictEqual(rootScope.getReference('b').value, -(-1));
-                assert.strictEqual(rootScope.getReference('c').value, +1);
-                assert.strictEqual(rootScope.getReference('d').value, +-1);
-                assert.strictEqual(rootScope.getReference('e').value, !1);
-                assert.strictEqual(rootScope.getReference('f').value, !!1);
-                assert.strictEqual(rootScope.getReference('g').value, ~1);
-                assert.strictEqual(rootScope.getReference('h').value, typeof 1);
-                assert.strictEqual(rootScope.getReference('i').value, void 1);
-            });
+            assert.strictEqual(rootScope.getReference('a').value, -1);
+            assert.strictEqual(rootScope.getReference('b').value, -(-1));
+            assert.strictEqual(rootScope.getReference('c').value, +1);
+            assert.strictEqual(rootScope.getReference('d').value, +-1);
+            assert.strictEqual(rootScope.getReference('e').value, !1);
+            assert.strictEqual(rootScope.getReference('f').value, !!1);
+            assert.strictEqual(rootScope.getReference('g').value, ~1);
+            assert.strictEqual(rootScope.getReference('h').value, typeof 1);
+            assert.strictEqual(rootScope.getReference('i').value, void 1);
+        });
 
-            it('assignment from unary expression - member expression', function() {
-                var code = '\
+        it('member expression', function() {
+            var code = '\
                     var obj = { a: { b: { c: 1 } } };\
                     var a = -obj.a.b.c;\
                     var b = -(-obj.a.b.c);\
@@ -860,24 +861,26 @@ describe('Processor.values', function() {
                     var h = typeof obj.a.b.c;\
                     var i = void obj.a.b.c;\
                 ';
-                var ast = esprima.parse(code);
+            var ast = esprima.parse(code);
 
-                processNames(ast, rootScope);
-                processValues(ast);
+            processNames(ast, rootScope);
+            processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, -1);
-                assert.strictEqual(rootScope.getReference('b').value, -(-1));
-                assert.strictEqual(rootScope.getReference('c').value, +1);
-                assert.strictEqual(rootScope.getReference('d').value, +-1);
-                assert.strictEqual(rootScope.getReference('e').value, !1);
-                assert.strictEqual(rootScope.getReference('f').value, !!1);
-                assert.strictEqual(rootScope.getReference('g').value, ~1);
-                assert.strictEqual(rootScope.getReference('h').value, typeof 1);
-                assert.strictEqual(rootScope.getReference('i').value, void 1);
-            });
+            assert.strictEqual(rootScope.getReference('a').value, -1);
+            assert.strictEqual(rootScope.getReference('b').value, -(-1));
+            assert.strictEqual(rootScope.getReference('c').value, +1);
+            assert.strictEqual(rootScope.getReference('d').value, +-1);
+            assert.strictEqual(rootScope.getReference('e').value, !1);
+            assert.strictEqual(rootScope.getReference('f').value, !!1);
+            assert.strictEqual(rootScope.getReference('g').value, ~1);
+            assert.strictEqual(rootScope.getReference('h').value, typeof 1);
+            assert.strictEqual(rootScope.getReference('i').value, void 1);
+        });
 
-            it('assignment from unary expression - object expression + member expression', function() {
-                var code = '\
+        // todo computed member expression
+
+        it('object + member expression', function() {
+            var code = '\
                     var a = -{ a: { b: { c: 1 } } }.a.b.c;\
                     var b = -(-{ a: { b: { c: 1 } } }.a.b.c);\
                     var c = +{ a: { b: { c: 1 } } }.a.b.c;\
@@ -888,104 +891,227 @@ describe('Processor.values', function() {
                     var h = typeof { a: { b: { c: 1 } } }.a.b.c;\
                     var i = void { a: { b: { c: 1 } } }.a.b.c;\
                 ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, -1);
+            assert.strictEqual(rootScope.getReference('b').value, -(-1));
+            assert.strictEqual(rootScope.getReference('c').value, +1);
+            assert.strictEqual(rootScope.getReference('d').value, +-1);
+            assert.strictEqual(rootScope.getReference('e').value, !1);
+            assert.strictEqual(rootScope.getReference('f').value, !!1);
+            assert.strictEqual(rootScope.getReference('g').value, ~1);
+            assert.strictEqual(rootScope.getReference('h').value, typeof 1);
+            assert.strictEqual(rootScope.getReference('i').value, void 1);
+        });
+
+        describe('delete', function() {
+            it('literal', function() {
+                var code = '\
+                        var a = delete 1\
+                    ';
                 var ast = esprima.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
 
-                assert.strictEqual(rootScope.getReference('a').value, -1);
-                assert.strictEqual(rootScope.getReference('b').value, -(-1));
-                assert.strictEqual(rootScope.getReference('c').value, +1);
-                assert.strictEqual(rootScope.getReference('d').value, +-1);
-                assert.strictEqual(rootScope.getReference('e').value, !1);
-                assert.strictEqual(rootScope.getReference('f').value, !!1);
-                assert.strictEqual(rootScope.getReference('g').value, ~1);
-                assert.strictEqual(rootScope.getReference('h').value, typeof 1);
-                assert.strictEqual(rootScope.getReference('i').value, void 1);
+                assert.isTrue(rootScope.getReference('a').value);
             });
 
-            describe('delete', function() {
-                it('literal', function() {
-                    var code = '\
-                        var a = delete 1\
-                    ';
-                    var ast = esprima.parse(code);
-
-                    processNames(ast, rootScope);
-                    processValues(ast);
-
-                    assert.isTrue(rootScope.getReference('a').value);
-                });
-
-                it('identifier', function() {
-                    var code = '\
+            it('identifier', function() {
+                var code = '\
                         var prop = 1;\
                         var a = delete prop\
                     ';
-                    var ast = esprima.parse(code);
+                var ast = esprima.parse(code);
 
-                    processNames(ast, rootScope);
-                    processValues(ast);
+                processNames(ast, rootScope);
+                processValues(ast);
 
-                    assert.isTrue(rootScope.getReference('a').value);
-                });
+                assert.isTrue(rootScope.getReference('a').value);
+            });
 
-                it('member expression', function() {
-                    var code = '\
+            it('member expression', function() {
+                var code = '\
                         var obj = { a: { b: { c: 1 } } };\
                         var a = delete obj.a.b.c;\
                         var b = obj.a.b.c;\
                     ';
-                    var ast = esprima.parse(code);
+                var ast = esprima.parse(code);
 
-                    processNames(ast, rootScope);
-                    processValues(ast);
+                processNames(ast, rootScope);
+                processValues(ast);
 
-                    assert.isTrue(rootScope.getReference('a').value);
-                    assert.isUndefined(rootScope.getReference('b').value);
-                });
+                assert.isTrue(rootScope.getReference('a').value);
+                assert.isUndefined(rootScope.getReference('b').value);
+            });
 
-                it('computed member expression', function() {
-                    var code = '\
+            it('computed member expression', function() {
+                var code = '\
                         var prop = \'c\';\
                         var obj = { a: { b: { c: 1 } } };\
                         var a = delete obj.a.b[prop];\
                         var b = obj.a.b.c;\
                     ';
-                    var ast = esprima.parse(code);
+                var ast = esprima.parse(code);
 
-                    processNames(ast, rootScope);
-                    processValues(ast);
+                processNames(ast, rootScope);
+                processValues(ast);
 
-                    assert.isTrue(rootScope.getReference('a').value);
-                    assert.isUndefined(rootScope.getReference('b').value);
-                });
+                assert.isTrue(rootScope.getReference('a').value);
+                assert.isUndefined(rootScope.getReference('b').value);
+            });
 
-                it('undefined member expression', function() {
-                    var code = '\
+            it('undefined member expression', function() {
+                var code = '\
                         var obj = { a: { b: { c: 1 } } };\
                         var a = delete obj.a.b.d;\
                     ';
-                    var ast = esprima.parse(code);
+                var ast = esprima.parse(code);
 
-                    processNames(ast, rootScope);
-                    processValues(ast);
+                processNames(ast, rootScope);
+                processValues(ast);
 
-                    assert.isTrue(rootScope.getReference('a').value);
-                });
+                assert.isTrue(rootScope.getReference('a').value);
+            });
 
-                it('undefined identifier', function() {
-                    var code = '\
+            it('undefined identifier', function() {
+                var code = '\
                         var a = delete obj.a.b.d;\
                     ';
-                    var ast = esprima.parse(code);
+                var ast = esprima.parse(code);
 
-                    processNames(ast, rootScope);
-                    processValues(ast);
+                processNames(ast, rootScope);
+                processValues(ast);
 
-                    assert.isTrue(rootScope.getReference('a').value);
-                });
-            })
+                assert.isTrue(rootScope.getReference('a').value);
+            });
+        });
+    });
+
+    describe('update expression', function() {
+        it('identifier', function() {
+            var code = '\
+                    var a = 1;\
+                    var b = ++a;\
+                    var c = a++;\
+                    var d = --a;\
+                    var e = a--;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 2);
+            assert.strictEqual(rootScope.getReference('c').value, 2);
+            assert.strictEqual(rootScope.getReference('d').value, 2);
+            assert.strictEqual(rootScope.getReference('e').value, 2);
+        });
+
+        it('member expression', function() {
+            var code = '\
+                    var obj = { a: { b: { c: 1 } } };\
+                    var b = ++obj.a.b.c;\
+                    var c = obj.a.b.c++;\
+                    var d = --obj.a.b.c;\
+                    var e = obj.a.b.c--;\
+                    var a = obj.a.b.c\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 2);
+            assert.strictEqual(rootScope.getReference('c').value, 2);
+            assert.strictEqual(rootScope.getReference('d').value, 2);
+            assert.strictEqual(rootScope.getReference('e').value, 2);
+        });
+
+        it('computed member expression', function() {
+            var code = '\
+                    var prop = \'c\';\
+                    var obj = { a: { b: { c: 1 } } };\
+                    var b = ++obj.a.b[prop];\
+                    var c = obj.a.b[prop]++;\
+                    var d = --obj.a.b[prop];\
+                    var e = obj.a.b[prop]--;\
+                    var a = obj.a.b[prop]\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 2);
+            assert.strictEqual(rootScope.getReference('c').value, 2);
+            assert.strictEqual(rootScope.getReference('d').value, 2);
+            assert.strictEqual(rootScope.getReference('e').value, 2);
+        });
+
+        it('undefined identifier', function() {
+            var code = '\
+                    var b = ++a;\
+                    var c = a++;\
+                    var d = --a;\
+                    var e = a--;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.isUndefined(rootScope.getReference('b').value);
+            assert.isUndefined(rootScope.getReference('c').value);
+            assert.isUndefined(rootScope.getReference('d').value);
+            assert.isUndefined(rootScope.getReference('e').value);
+        });
+
+        it('undefined member expression', function() {
+            var code = '\
+                    var obj = { a: { b: {} } };\
+                    var b = ++obj.a.b.c;\
+                    var c = obj.a.b.c++;\
+                    var d = --obj.a.b.c;\
+                    var e = obj.a.b.c--;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.typeOf(rootScope.getReference('b').value, 'number');
+            assert.isNaN(rootScope.getReference('b').value);
+            assert.typeOf(rootScope.getReference('c').value, 'number');
+            assert.isNaN(rootScope.getReference('c').value);
+            assert.typeOf(rootScope.getReference('d').value, 'number');
+            assert.isNaN(rootScope.getReference('d').value);
+            assert.typeOf(rootScope.getReference('e').value, 'number');
+            assert.isNaN(rootScope.getReference('e').value);
+        });
+
+        it('undefined object in member expression', function() {
+            var code = '\
+                    var b = ++obj.a.b.c;\
+                    var c = obj.a.b.c++;\
+                    var d = --obj.a.b.c;\
+                    var e = obj.a.b.c--;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.isUndefined(rootScope.getReference('b').value);
+            assert.isUndefined(rootScope.getReference('c').value);
+            assert.isUndefined(rootScope.getReference('d').value);
+            assert.isUndefined(rootScope.getReference('e').value);
         });
     });
 
