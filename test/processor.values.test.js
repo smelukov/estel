@@ -466,7 +466,60 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
         });
 
-        // todo computed member expression
+        it('computed member expression', function() {
+            var code = '\
+                    var prop = \'d\';\
+                    var obj = { a: { b: { c: { d: 2 } } } };\
+                    var right = 3;\
+                    var a = obj.a.b.c[prop] + right;\
+                    var b = obj.a.b.c[prop] - right;\
+                    var c = obj.a.b.c[prop] * right;\
+                    var d = obj.a.b.c[prop] / right;\
+                    var e = obj.a.b.c[prop] % right;\
+                    var f = obj.a.b.c[prop] ** right;\
+                    var g = obj.a.b.c[prop] << right;\
+                    var h = obj.a.b.c[prop] >> right;\
+                    var i = obj.a.b.c[prop] >>> right;\
+                    var j = obj.a.b.c[prop] & right;\
+                    var k = obj.a.b.c[prop] | right;\
+                    var l = obj.a.b.c[prop] ^ right;\
+                    var m = obj.a.b.c[prop] == right;\
+                    var n = obj.a.b.c[prop] != right;\
+                    var o = obj.a.b.c[prop] === right;\
+                    var p = obj.a.b.c[prop] !== right;\
+                    var q = obj.a.b.c[prop] < right;\
+                    var r = obj.a.b.c[prop] <= right;\
+                    var s = obj.a.b.c[prop] > right;\
+                    var t = obj.a.b.c[prop] >= right;\
+                    var u = obj.a.b.c[prop] in { 2: right };\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 2 + 3);
+            assert.strictEqual(rootScope.getReference('b').value, 2 - 3);
+            assert.strictEqual(rootScope.getReference('c').value, 2 * 3);
+            assert.strictEqual(rootScope.getReference('d').value, 2 / 3);
+            assert.strictEqual(rootScope.getReference('e').value, 2 % 3);
+            assert.strictEqual(rootScope.getReference('f').value, Math.pow(2, 3));
+            assert.strictEqual(rootScope.getReference('g').value, 2 << 3);
+            assert.strictEqual(rootScope.getReference('h').value, 2 >> 3);
+            assert.strictEqual(rootScope.getReference('i').value, 2 >>> 3);
+            assert.strictEqual(rootScope.getReference('j').value, 2 & 3);
+            assert.strictEqual(rootScope.getReference('k').value, 2 | 3);
+            assert.strictEqual(rootScope.getReference('l').value, 2 ^ 3);
+            assert.strictEqual(rootScope.getReference('m').value, 2 == 3);
+            assert.strictEqual(rootScope.getReference('n').value, 2 != 3);
+            assert.strictEqual(rootScope.getReference('o').value, 2 === 3);
+            assert.strictEqual(rootScope.getReference('p').value, 2 !== 3);
+            assert.strictEqual(rootScope.getReference('q').value, 2 < 3);
+            assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
+            assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
+            assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
+        });
 
         it('object + member expression', function() {
             var code = '\
@@ -877,7 +930,35 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('i').value, void 1);
         });
 
-        // todo computed member expression
+        it('computed member expression', function() {
+            var code = '\
+                    var prop = \'c\';\
+                    var obj = { a: { b: { c: 1 } } };\
+                    var a = -obj.a.b[prop];\
+                    var b = -(-obj.a.b[prop]);\
+                    var c = +obj.a.b[prop];\
+                    var d = +-obj.a.b[prop];\
+                    var e = !obj.a.b[prop];\
+                    var f = !!obj.a.b[prop];\
+                    var g = ~obj.a.b[prop];\
+                    var h = typeof obj.a.b[prop];\
+                    var i = void obj.a.b[prop];\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, -1);
+            assert.strictEqual(rootScope.getReference('b').value, -(-1));
+            assert.strictEqual(rootScope.getReference('c').value, +1);
+            assert.strictEqual(rootScope.getReference('d').value, +-1);
+            assert.strictEqual(rootScope.getReference('e').value, !1);
+            assert.strictEqual(rootScope.getReference('f').value, !!1);
+            assert.strictEqual(rootScope.getReference('g').value, ~1);
+            assert.strictEqual(rootScope.getReference('h').value, typeof 1);
+            assert.strictEqual(rootScope.getReference('i').value, void 1);
+        });
 
         it('object + member expression', function() {
             var code = '\
@@ -1175,7 +1256,28 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('d').value, 1);
         });
 
-        // todo computed member expression
+        it('computed member expression', function() {
+            var code = '\
+                    var propD = \'d\';\
+                    var propE = \'e\';\
+                    var obj = { a: { b: { c: { d: 1, e: 0 } } } };\
+                    var one = 1;\
+                    var zero = 0;\
+                    var a = obj.a.b.c[propD] && one;\
+                    var b = obj.a.b.c[propE] && zero;\
+                    var c = obj.a.b.c[propD] || one;\
+                    var d = obj.a.b.c[propE] || one;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 0);
+            assert.strictEqual(rootScope.getReference('c').value, 1);
+            assert.strictEqual(rootScope.getReference('d').value, 1);
+        });
 
         it('object + member expression', function() {
             var code = '\
