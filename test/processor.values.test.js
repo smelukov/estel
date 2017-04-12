@@ -68,130 +68,780 @@ describe('Processor.values', function() {
     });
 
     describe('assignment', function() {
-        it('assignment literal', function() {
-            var code = 'var a = 10; var b; b = 20';
+        it('literal', function() {
+            var code = '\
+                a = 10;\
+                b = a;\
+                b += 10;\
+                c = a;\
+                c -= 10;\
+                d = a;\
+                d *= 10;\
+                e = a;\
+                e /= 10;\
+                f = a;\
+                f %= 10;\
+                g = a;\
+                g <<= 10;\
+                h = a;\
+                h >>= 10;\
+                i = a;\
+                i >>>= 10;\
+                j = a;\
+                j |= 10;\
+                k = a;\
+                k ^= 10;\
+                l = a;\
+                l &= 10;\
+                m &= 10;\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
             assert.equal(rootScope.getReference('a').value, 10);
-            assert.equal(rootScope.getReference('b').value, 20);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.isFalse(rootScope.hasReference('m'));
         });
 
-        it('assignment identifier', function() {
-            var code = 'var a = 10; var b; b = a';
+        it('identifier', function() {
+            var code = '\
+                a = 10;\
+                b = a;\
+                b += a;\
+                c = a;\
+                c -= a;\
+                d = a;\
+                d *= a;\
+                e = a;\
+                e /= a;\
+                f = a;\
+                f %= a;\
+                g = a;\
+                g <<= a;\
+                h = a;\
+                h >>= a;\
+                i = a;\
+                i >>>= a;\
+                j = a;\
+                j |= a;\
+                k = a;\
+                k ^= a;\
+                l = a;\
+                l &= a;\
+                m = some;\
+                n &= some;\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
             assert.equal(rootScope.getReference('a').value, 10);
-            assert.equal(rootScope.getReference('b').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.isUndefined(rootScope.getReference('m').value);
+            assert.isFalse(rootScope.hasReference('n'));
         });
 
-        it('assignment literal to member expression', function() {
-            var code = 'var a = { b: 1, c: { d: 1, e: 2 } }; a.c.d = 20; var b = a.c.d;';
+        it('literal to member expression', function() {
+            var code = '\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a.b.c = 10;\
+                a = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c += 10;\
+                b = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c -= 10;\
+                c = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c *= 10;\
+                d = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c /= 10;\
+                e = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c %= 10;\
+                f = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c <<= 10;\
+                g = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c >>= 10;\
+                h = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c >>>= 10;\
+                i = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c |= 10;\
+                j = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c ^= 10;\
+                k = obj.a.b.c;\
+                obj.a.b.c = 10;\
+                obj.a.b.c &= 10;\
+                l = obj.a.b.c;\
+                obj.a.b.d = 10;\
+                m = obj.a.b.d;\
+                obj.a.b.e &= 10;\
+                n = obj.a.b.e;\
+                o = someObj.a.b.e;\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('a').value, { b: 1, c: { d: 20, e: 2 } });
-            assert.strictEqual(rootScope.getReference('b').value, 20);
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
         });
 
-        it('assignment literal to computed (literal) member expression', function() {
-            var code = 'var a = { b: 1, 1: { d: 1, e: 2 } }; a[1].d = 20; var b = a[1].d;';
+        it('literal to computed member expression - literal', function() {
+            var code = '\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a[\'b\'].c = 10;\
+                a = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c += 10;\
+                b = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c -= 10;\
+                c = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c *= 10;\
+                d = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c /= 10;\
+                e = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c %= 10;\
+                f = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c <<= 10;\
+                g = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c >>= 10;\
+                h = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c >>>= 10;\
+                i = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c |= 10;\
+                j = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c ^= 10;\
+                k = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = 10;\
+                obj.a[\'b\'].c &= 10;\
+                l = obj.a[\'b\'].c;\
+                obj.a[\'b\'].d = 10;\
+                m = obj.a[\'b\'].d;\
+                obj.a[\'b\'].e &= 10;\
+                n = obj.a[\'b\'].e;\
+                o = someObj.a[\'b\'].e;\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('a').value, { b: 1, 1: { d: 20, e: 2 } });
-            assert.strictEqual(rootScope.getReference('b').value, 20);
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
         });
 
-        it('assignment literal to computed (literal - last) member expression', function() {
-            var code = 'var a = { b: 1, c: { 1: 1, e: 2 } }; a.c[1] = 20; var b = a.c[1];';
+        it('literal to computed member expression - identifier', function() {
+            var code = '\
+                prop = \'b\';\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a[prop].c = 10;\
+                a = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c += 10;\
+                b = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c -= 10;\
+                c = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c *= 10;\
+                d = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c /= 10;\
+                e = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c %= 10;\
+                f = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c <<= 10;\
+                g = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c >>= 10;\
+                h = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c >>>= 10;\
+                i = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c |= 10;\
+                j = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c ^= 10;\
+                k = obj.a[prop].c;\
+                obj.a[prop].c = 10;\
+                obj.a[prop].c &= 10;\
+                l = obj.a[prop].c;\
+                obj.a[prop].d = 10;\
+                m = obj.a[prop].d;\
+                obj.a[prop].e &= 10;\
+                n = obj.a[prop].e;\
+                o = someObj.a[prop].e;\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('a').value, { b: 1, c: { 1: 20, e: 2 } });
-            assert.strictEqual(rootScope.getReference('b').value, 20);
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
         });
 
-        it('assignment identifier to member expression', function() {
-            var code = 'var a = { b: 1, c: { d: 1, e: 2 } }, newValue = 20; a.c.d = newValue; var b = a.c.d;';
+        it('literal to computed member expression - literal last', function() {
+            var code = '\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a.b[\'c\'] = 10;\
+                a = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] += 10;\
+                b = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] -= 10;\
+                c = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] *= 10;\
+                d = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] /= 10;\
+                e = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] %= 10;\
+                f = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] <<= 10;\
+                g = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] >>= 10;\
+                h = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] >>>= 10;\
+                i = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] |= 10;\
+                j = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] ^= 10;\
+                k = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] &= 10;\
+                l = obj.a.b[\'c\'];\
+                obj.a.b[\'d\'] = 10;\
+                m = obj.a.b[\'d\'];\
+                obj.a.b[\'e\'] &= 10;\
+                n = obj.a.b[\'e\'];\
+                o = someObj.a.b[\'e\'];\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('a').value, { b: 1, c: { d: 20, e: 2 } });
-            assert.strictEqual(rootScope.getReference('b').value, 20);
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
         });
 
-        it('assignment identifier to undefined member expression', function() {
-            var code = 'var a = { b: 1, c: { d: 1, e: 2 } }, newValue = 20; a.e.d = newValue; var b = a.e.d;';
-            var ast = parser.parse(code);
-
-            processNames(ast, rootScope);
-            processValues(ast);
-
-            assert.deepEqual(rootScope.getReference('a').value, { b: 1, c: { d: 1, e: 2 } });
-            assert.isUndefined(rootScope.getReference('b').value);
-        });
-
-        it('assignment identifier to undefined identifier with member expression', function() {
-            var code = 'var newValue = 20; a.e.d = newValue; var b = a.e.d;';
-            var ast = parser.parse(code);
-
-            processNames(ast, rootScope);
-            processValues(ast);
-
-            assert.isFalse(rootScope.hasReference('a'));
-            assert.isUndefined(rootScope.getReference('b').value);
-        });
-
-        it('assignment identifier to computed (identifier) member expression', function() {
-            var code = 'var a = { b: 1, c: { d: 1, e: 2 } },\
+        it('literal to computed member expression - identifier last', function() {
+            var code = '\
                 prop = \'c\';\
-                newValue = 20;\
-                a[prop].d = newValue;\
-                var b = a[prop].d;';
+                propD = \'d\';\
+                propE = \'e\';\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a.b[prop] = 10;\
+                a = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] += 10;\
+                b = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] -= 10;\
+                c = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] *= 10;\
+                d = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] /= 10;\
+                e = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] %= 10;\
+                f = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] <<= 10;\
+                g = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] >>= 10;\
+                h = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] >>>= 10;\
+                i = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] |= 10;\
+                j = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] ^= 10;\
+                k = obj.a.b[prop];\
+                obj.a.b[prop] = 10;\
+                obj.a.b[prop] &= 10;\
+                l = obj.a.b[prop];\
+                obj.a.b[propD] = 10;\
+                m = obj.a.b[propD];\
+                obj.a.b[propE] &= 10;\
+                n = obj.a.b[propE];\
+                o = someObj.a.b[propE];\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('a').value, { b: 1, c: { d: 20, e: 2 } });
-            assert.strictEqual(rootScope.getReference('b').value, 20);
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
         });
 
-        it('assignment identifier to computed (identifier - last) member expression', function() {
-            var code = 'var a = { b: 1, c: { d: 1, e: 2 } },\
-                prop = \'d\';\
-                newValue = 20;\
-                a.c[prop] = newValue;\
-                var b = a.c[prop];';
+        it('identifier to member expression', function() {
+            var code = '\
+                value = 10;\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a.b.c = value;\
+                a = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c += value;\
+                b = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c -= value;\
+                c = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c *= value;\
+                d = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c /= value;\
+                e = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c %= value;\
+                f = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c <<= value;\
+                g = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c >>= value;\
+                h = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c >>>= value;\
+                i = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c |= value;\
+                j = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c ^= value;\
+                k = obj.a.b.c;\
+                obj.a.b.c = value;\
+                obj.a.b.c &= value;\
+                l = obj.a.b.c;\
+                obj.a.b.d = value;\
+                m = obj.a.b.d;\
+                obj.a.b.e &= value;\
+                n = obj.a.b.e;\
+                o = someObj.a.b.e;\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('a').value, { b: 1, c: { d: 20, e: 2 } });
-            assert.strictEqual(rootScope.getReference('b').value, 20);
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
         });
 
-        it('assignment object (literal) to member expression', function() {
+        it('identifier to computed member expression - literal', function() {
+            var code = '\
+                value = 10;\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a[\'b\'].c = value;\
+                a = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c += value;\
+                b = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c -= value;\
+                c = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c *= value;\
+                d = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c /= value;\
+                e = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c %= value;\
+                f = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c <<= value;\
+                g = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c >>= value;\
+                h = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c >>>= value;\
+                i = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c |= value;\
+                j = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c ^= value;\
+                k = obj.a[\'b\'].c;\
+                obj.a[\'b\'].c = value;\
+                obj.a[\'b\'].c &= value;\
+                l = obj.a[\'b\'].c;\
+                obj.a[\'b\'].d = value;\
+                m = obj.a[\'b\'].d;\
+                obj.a[\'b\'].e &= value;\
+                n = obj.a[\'b\'].e;\
+                o = someObj.a[\'b\'].e;\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
+        });
+
+        it('identifier to computed member expression - identifier', function() {
+            var code = '\
+                value = 10;\
+                prop = \'b\';\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a[prop].c = value;\
+                a = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c += value;\
+                b = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c -= value;\
+                c = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c *= value;\
+                d = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c /= value;\
+                e = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c %= value;\
+                f = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c <<= value;\
+                g = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c >>= value;\
+                h = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c >>>= value;\
+                i = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c |= value;\
+                j = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c ^= value;\
+                k = obj.a[prop].c;\
+                obj.a[prop].c = value;\
+                obj.a[prop].c &= value;\
+                l = obj.a[prop].c;\
+                obj.a[prop].d = value;\
+                m = obj.a[prop].d;\
+                obj.a[prop].e &= value;\
+                n = obj.a[prop].e;\
+                o = someObj.a[prop].e;\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
+        });
+
+        it('identifier to computed member expression - literal last', function() {
+            var code = '\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a.b[\'c\'] = 10;\
+                a = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] += 10;\
+                b = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] -= 10;\
+                c = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] *= 10;\
+                d = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] /= 10;\
+                e = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] %= 10;\
+                f = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] <<= 10;\
+                g = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] >>= 10;\
+                h = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] >>>= 10;\
+                i = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] |= 10;\
+                j = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] ^= 10;\
+                k = obj.a.b[\'c\'];\
+                obj.a.b[\'c\'] = 10;\
+                obj.a.b[\'c\'] &= 10;\
+                l = obj.a.b[\'c\'];\
+                obj.a.b[\'d\'] = 10;\
+                m = obj.a.b[\'d\'];\
+                obj.a.b[\'e\'] &= 10;\
+                n = obj.a.b[\'e\'];\
+                o = someObj.a.b[\'e\'];\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
+        });
+
+        it('identifier to computed member expression - identifier last', function() {
+            var code = '\
+                value = 10;\
+                prop = \'c\';\
+                propD = \'d\';\
+                propE = \'e\';\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a.b[prop] = value;\
+                a = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] += value;\
+                b = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] -= value;\
+                c = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] *= value;\
+                d = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] /= value;\
+                e = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] %= value;\
+                f = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] <<= value;\
+                g = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] >>= value;\
+                h = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] >>>= value;\
+                i = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] |= value;\
+                j = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] ^= value;\
+                k = obj.a.b[prop];\
+                obj.a.b[prop] = value;\
+                obj.a.b[prop] &= value;\
+                l = obj.a.b[prop];\
+                obj.a.b[propD] = value;\
+                m = obj.a.b[propD];\
+                obj.a.b[propE] &= value;\
+                n = obj.a.b[propE];\
+                o = someObj.a.b[propE];\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & 10);
+            assert.isUndefined(rootScope.hasReference('o').value);
+        });
+
+        it('object (literal) to member expression', function() {
             var code = '\
                 var a = { b: 1, c: { d: 2 } };\
                 a.c.d = { e: 20, f: 30 };\
                 var b = a.c.d,\
-                    c = a.c.d.e';
+                c = a.c.d.e';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
@@ -202,13 +852,13 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('c').value, 20);
         });
 
-        it('assignment object (identifier) to member expression', function() {
+        it('object (identifier) to member expression', function() {
             var code = '\
                 var a = { b: 1, c: { d: 2 } },\
                 newValue = { e: 20, f: 30 };\
                 a.c.d = newValue;\
                 var b = a.c.d,\
-                    c = a.c.d.e';
+                c = a.c.d.e';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
@@ -219,89 +869,321 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('c').value, 20);
         });
 
-        it('assignment member expression to member expression', function() {
+        it('member expression to member expression', function() {
             var code = '\
-                var obj1 = { b: 1, c: { d: 2 } };\
-                var obj2 = { e: 3, f: { g: 4 } };\
-                obj1.b = 10;\
-                obj1.c.d = 20;\
-                obj2.e = obj1.c;\
-                obj2.f.g = obj1.c.d;\
-                obj2.f.h = 100;\
-                var a = obj1.c.d;\
-                var b = obj2.f.g;\
-                var c = obj2.f.h';
-            var ast = parser.parse(code);
-
-            processNames(ast, rootScope);
-            processValues(ast);
-
-            assert.deepEqual(rootScope.getReference('obj1').value, { b: 10, c: { d: 20 } });
-            assert.deepEqual(rootScope.getReference('obj2').value, { e: { d: 20 }, f: { g: 20, h: 100 } });
-            assert.strictEqual(rootScope.getReference('a').value, 20);
-            assert.strictEqual(rootScope.getReference('b').value, 20);
-            assert.strictEqual(rootScope.getReference('c').value, 100);
-        });
-
-        it('auto create left reference', function() {
-            var code = 'a = 10';
+                value = 10;\
+                obj1 = { a: { b: { c: 1 } } };\
+                obj2 = { a: { b: { c: 1 } } };\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = obj1.a.b.c;\
+                a = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c += obj1.a.b.c;\
+                b = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c -= obj1.a.b.c;\
+                c = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c *= obj1.a.b.c;\
+                d = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c /= obj1.a.b.c;\
+                e = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c %= obj1.a.b.c;\
+                f = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c <<= obj1.a.b.c;\
+                g = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c >>= obj1.a.b.c;\
+                h = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c >>>= obj1.a.b.c;\
+                i = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c |= obj1.a.b.c;\
+                j = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c ^= obj1.a.b.c;\
+                k = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c &= obj1.a.b.c;\
+                l = obj2.a.b.c;\
+                obj1.a.b.d = value;\
+                obj2.a.b.d = value;\
+                m = obj2.a.b.d;\
+                obj2.a.b.e &= obj1.a.b.e;\
+                n = obj2.a.b.e;\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
             assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & undefined);
         });
 
-        it('assignment from undefined reference', function() {
-            var code = 'var a = b';
+        it('computed member expression to computed member expression', function() {
+            var code = '\
+                value = 10;\
+                obj1 = { a: { b: { c: 1 } } };\
+                obj2 = { a: { b: { c: 1 } } };\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = obj1.a.b.c;\
+                a = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c += obj1.a.b.c;\
+                b = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c -= obj1.a.b.c;\
+                c = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c *= obj1.a.b.c;\
+                d = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c /= obj1.a.b.c;\
+                e = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c %= obj1.a.b.c;\
+                f = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c <<= obj1.a.b.c;\
+                g = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c >>= obj1.a.b.c;\
+                h = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c >>>= obj1.a.b.c;\
+                i = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c |= obj1.a.b.c;\
+                j = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c ^= obj1.a.b.c;\
+                k = obj2.a.b.c;\
+                obj1.a.b.c = value;\
+                obj2.a.b.c = value;\
+                obj2.a.b.c &= obj1.a.b.c;\
+                l = obj2.a.b.c;\
+                obj1.a.b.d = value;\
+                obj2.a.b.d = value;\
+                m = obj2.a.b.d;\
+                obj2.a.b.e &= obj1.a.b.e;\
+                n = obj2.a.b.e;\
+            ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.isFalse(rootScope.hasReference('b'));
-            assert.isUndefined(rootScope.getReference('a').value);
+            assert.equal(rootScope.getReference('a').value, 10);
+            assert.equal(rootScope.getReference('b').value, 10 + 10);
+            assert.equal(rootScope.getReference('c').value, 10 - 10);
+            assert.equal(rootScope.getReference('d').value, 10 * 10);
+            assert.equal(rootScope.getReference('e').value, 10 / 10);
+            assert.equal(rootScope.getReference('f').value, 10 % 10);
+            assert.equal(rootScope.getReference('g').value, 10 << 10);
+            assert.equal(rootScope.getReference('h').value, 10 >> 10);
+            assert.equal(rootScope.getReference('i').value, 10 >>> 10);
+            assert.equal(rootScope.getReference('j').value, 10 | 10);
+            assert.equal(rootScope.getReference('k').value, 10 ^ 10);
+            assert.equal(rootScope.getReference('l').value, 10 & 10);
+            assert.equal(rootScope.getReference('m').value, 10);
+            assert.equal(rootScope.getReference('n').value, undefined & undefined);
         });
 
-        it('multi assignment - literal;', function() {
-            var code = 'a = b = c = 1';
+        it('multi assignment', function() {
+            var code = '\
+                var a = 10, b = 10, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, i = 0, j = 0, k = 0, l = 0, m = 0;\
+                c += a += b += b += a += a;\
+                a = 10;\
+                b = 10;\
+                d -= a -= b -= b -= a -= a;\
+                a = 10;\
+                b = 10;\
+                e *= a *= b *= b *= a *= a;\
+                a = 10;\
+                b = 10;\
+                f /= a /= b /= b /= a /= a;\
+                a = 10;\
+                b = 10;\
+                g %= a %= b %= b %= a %= a;\
+                a = 10;\
+                b = 10;\
+                h <<= a <<= b <<= b <<= a <<= a;\
+                a = 10;\
+                b = 10;\
+                i >>= a >>= b >>= b >>= a >>= a;\
+                a = 10;\
+                b = 10;\
+                j >>>= a >>>= b >>>= b >>>= a >>>= a;\
+                a = 10;\
+                b = 10;\
+                k |= a |= b |= b |= a |= a;\
+                a = 10;\
+                b = 10;\
+                l ^= a ^= b ^= b ^= a ^= a;\
+                a = 10;\
+                b = 10;\
+                m &= a &= b &= b &= a &= a;\
+            ';
             var ast = parser.parse(code);
+            var a = 10;
+            var b = 10;
+            var c = 0;
 
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.strictEqual(rootScope.getReference('a').value, 1);
-            assert.strictEqual(rootScope.getReference('b').value, 1);
-            assert.strictEqual(rootScope.getReference('c').value, 1);
+            assert.equal(rootScope.getReference('c').value, c += a += b += b += a += a);
+            a = b = 10;
+            c = 0;
+            assert.equal(rootScope.getReference('d').value, c -= a -= b -= b -= a -= a);
+            c = 0;
+            a = b = 10;
+            assert.equal(rootScope.getReference('e').value, c *= a *= b *= b *= a *= a);
+            c = 0;
+            a = b = 10;
+            assert.equal(rootScope.getReference('f').value, c /= a /= b /= b /= a /= a);
+            c = 0;
+            a = b = 10;
+            assert.isNaN(rootScope.getReference('g').value);
+            assert.equal(rootScope.getReference('h').value, c <<= a <<= b <<= b <<= a <<= a);
+            c = 0;
+            a = b = 10;
+            assert.equal(rootScope.getReference('i').value, c >>= a >>= b >>= b >>= a >>= a);
+            c = 0;
+            a = b = 10;
+            assert.equal(rootScope.getReference('j').value, c >>>= a >>>= b >>>= b >>>= a >>>= a);
+            c = 0;
+            a = b = 10;
+            assert.equal(rootScope.getReference('k').value, c |= a |= b |= b |= a |= a);
+            c = 0;
+            a = b = 10;
+            assert.equal(rootScope.getReference('l').value, c ^= a ^= b ^= b ^= a ^= a);
+            c = 0;
+            a = b = 10;
+            assert.equal(rootScope.getReference('m').value, c &= a &= b &= b &= a &= a);
+            c = 0;
+            a = b = 10;
         });
 
-        it('multi assignment - identifier;', function() {
-            var code = 'a = 1; b = c = d = a';
+        it('multi assignment - member expressions;', function() {
+            var code = '\
+                propB = \'b\';\
+                propC = \'c\';\
+                propD = \'d\';\
+                propE = \'e\';\
+                value = 10;\
+                obj = { a: { b: { c: 1 } } };\
+                obj.a[\'b\'][propC] = value = value;\
+                a = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] += obj.a[\'b\'][propC] += obj.a[\'b\'][propC];\
+                b = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] -= obj.a[\'b\'][propC] -= obj.a[\'b\'][propC];\
+                c = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] *= obj.a[\'b\'][propC] *= obj.a[\'b\'][propC];\
+                d = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] /= obj.a[\'b\'][propC] /= obj.a[\'b\'][propC];\
+                e = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] %= obj.a[\'b\'][propC] %= obj.a[\'b\'][propC];\
+                f = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] <<= obj.a[\'b\'][propC] <<= obj.a[\'b\'][propC];\
+                g = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] >>= obj.a[\'b\'][propC] >>= obj.a[\'b\'][propC];\
+                h = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] >>>= obj.a[\'b\'][propC] >>>= obj.a[\'b\'][propC];\
+                i = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] |= obj.a[\'b\'][propC] |= obj.a[\'b\'][propC];\
+                j = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] ^= obj.a[\'b\'][propC] ^= obj.a[\'b\'][propC];\
+                k = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propC] = value;\
+                obj.a[\'b\'][propC] &= obj.a[\'b\'][propC] &= obj.a[\'b\'][propC];\
+                l = obj.a[\'b\'][propC];\
+                obj.a[\'b\'][propD] = value;\
+                m = obj.a[\'b\'][propD];\
+                obj.a[\'b\'][propE] &= obj.a[\'b\'][propE] &= value;\
+                n = obj.a[\'b\'][propE];\
+                o = someObj.a[\'b\'][propE] &= someObj.a[\'b\'][propE] &= someObj.a[\'b\'][propE];\
+            ';
             var ast = parser.parse(code);
+            var a = 10;
 
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.strictEqual(rootScope.getReference('a').value, 1);
-            assert.strictEqual(rootScope.getReference('b').value, 1);
-            assert.strictEqual(rootScope.getReference('c').value, 1);
-            assert.strictEqual(rootScope.getReference('d').value, 1);
-        });
-
-        it('multi assignment - member expression', function() {
-            var code = 'var obj = { a: { b: 1 } }; a = b = obj.a.b = c = 10; d = obj.a.b';
-            var ast = parser.parse(code);
-
-            processNames(ast, rootScope);
-            processValues(ast);
-
-            assert.deepEqual(rootScope.getReference('obj').value, { a: { b: 10 } });
-
-            assert.strictEqual(rootScope.getReference('a').value, 10);
-            assert.strictEqual(rootScope.getReference('b').value, 10);
-            assert.strictEqual(rootScope.getReference('c').value, 10);
-            assert.strictEqual(rootScope.getReference('d').value, 10);
+            assert.equal(rootScope.getReference('a').value, a);
+            assert.equal(rootScope.getReference('b').value, a += a += a);
+            a = 10;
+            assert.equal(rootScope.getReference('c').value, a -= a -= a);
+            a = 10;
+            assert.equal(rootScope.getReference('d').value, a *= a *= a);
+            a = 10;
+            assert.equal(rootScope.getReference('e').value, a /= a /= a);
+            a = 10;
+            assert.isNaN(rootScope.getReference('f').value);
+            a = 10;
+            assert.equal(rootScope.getReference('g').value, a <<= a <<= a);
+            a = 10;
+            assert.equal(rootScope.getReference('h').value, a >>= a >>= a);
+            a = 10;
+            assert.equal(rootScope.getReference('i').value, a >>>= a >>>= a);
+            a = 10;
+            assert.equal(rootScope.getReference('j').value, a |= a |= a);
+            a = 10;
+            assert.equal(rootScope.getReference('k').value, a ^= a ^= a);
+            a = 10;
+            assert.equal(rootScope.getReference('l').value, a &= a &= a);
+            a = 10;
+            assert.equal(rootScope.getReference('m').value, a);
+            assert.equal(rootScope.getReference('n').value, undefined & undefined & a);
+            assert.isUndefined(rootScope.hasReference('o').value);
         });
     });
 
