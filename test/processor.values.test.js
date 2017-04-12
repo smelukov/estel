@@ -1115,6 +1115,167 @@ describe('Processor.values', function() {
         });
     });
 
+    describe('logical expression', function() {
+        it('literal', function() {
+            var code = '\
+                    var a = 1 && 1;\
+                    var b = 0 && 1;\
+                    var c = 1 || 1;\
+                    var d = 0 || 1;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 0);
+            assert.strictEqual(rootScope.getReference('c').value, 1);
+            assert.strictEqual(rootScope.getReference('d').value, 1);
+        });
+
+        it('identifier', function() {
+            var code = '\
+                    var one = 1;\
+                    var zero = 0;\
+                    var a = one && one;\
+                    var b = zero && one;\
+                    var c = one || one;\
+                    var d = zero || one;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 0);
+            assert.strictEqual(rootScope.getReference('c').value, 1);
+            assert.strictEqual(rootScope.getReference('d').value, 1);
+        });
+
+        it('member expression', function() {
+            var code = '\
+                    var obj = { a: { b: { c: { d: 1, e: 0 } } } };\
+                    var one = 1;\
+                    var zero = 0;\
+                    var a = obj.a.b.c.d && one;\
+                    var b = obj.a.b.c.e && zero;\
+                    var c = obj.a.b.c.d || one;\
+                    var d = obj.a.b.c.e || one;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 0);
+            assert.strictEqual(rootScope.getReference('c').value, 1);
+            assert.strictEqual(rootScope.getReference('d').value, 1);
+        });
+
+        // todo computed member expression
+
+        it('object + member expression', function() {
+            var code = '\
+                    var one = 1;\
+                    var zero = 0;\
+                    var a = { a: { b: { c: 1 } } }.a.b.c && one;\
+                    var b = { a: { b: { c: 0 } } }.a.b.c && zero;\
+                    var c = { a: { b: { c: 1 } } }.a.b.c || one;\
+                    var d = { a: { b: { c: 0 } } }.a.b.c || one;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 0);
+            assert.strictEqual(rootScope.getReference('c').value, 1);
+            assert.strictEqual(rootScope.getReference('d').value, 1);
+        });
+
+        it('multi logical expression - literal', function() {
+            var code = '\
+                    var a = (1 || 0) && (0 || 1);\
+                    var b = (0 && 1) && (0 || 0);\
+                    var c = (1 || 1) || (1 && 1);\
+                    var d = (0 || 0) || (1 || 1);\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 0);
+            assert.strictEqual(rootScope.getReference('c').value, 1);
+            assert.strictEqual(rootScope.getReference('d').value, 1);
+        });
+
+        it('multi logical expression - identifier', function() {
+            var code = '\
+                    var one = 1;\
+                    var zero = 0;\
+                    var a = (one || zero) && (zero || one);\
+                    var b = (zero && one) && (zero || zero);\
+                    var c = (one || one) || (one && one);\
+                    var d = (zero || zero) || (one || one);\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 0);
+            assert.strictEqual(rootScope.getReference('c').value, 1);
+            assert.strictEqual(rootScope.getReference('d').value, 1);
+        });
+
+        it('multi logical expression - object + member expression', function() {
+            var code = '\
+                    var one = 1;\
+                    var zero = 0;\
+                    var a = ({ a: { b: { c: 1 } } }.a.b.c || 0) && one;\
+                    var b = ({ a: { b: { c: 0 } } }.a.b.c && 1) && zero;\
+                    var c = ({ a: { b: { c: 1 } } }.a.b.c || 1) || one;\
+                    var d = ({ a: { b: { c: 0 } } }.a.b.c || 0) || one;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 1);
+            assert.strictEqual(rootScope.getReference('b').value, 0);
+            assert.strictEqual(rootScope.getReference('c').value, 1);
+            assert.strictEqual(rootScope.getReference('d').value, 1);
+        });
+
+        it('undefined logical expression', function() {
+            var code = '\
+                    var one = 1;\
+                    var zero = 0;\
+                    var a = (some1 || some2) && one;\
+                    var b = (some1 || some2) && zero;\
+                    var c = (some1 || some2) || one;\
+                    var d = (some1 || some2) || one;\
+                ';
+            var ast = esprima.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.isUndefined(rootScope.getReference('a').value);
+            assert.isUndefined(rootScope.getReference('b').value);
+            assert.isUndefined(rootScope.getReference('c').value);
+            assert.isUndefined(rootScope.getReference('d').value);
+        });
+    });
+
     describe('object expression', function() {
         it('creation', function() {
             var code = 'var obj = { }';
