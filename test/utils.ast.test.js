@@ -77,22 +77,4 @@ describe('Utils.AST', function() {
         assert.isTrue(utils.ast.isBlock(token3));
         assert.isTrue(utils.ast.isBlock(token4));
     });
-
-    it('#createObject', function() {
-        var token1 = esprima.parse('({})').body[0].expression;
-        var token2 = esprima.parse('({"a":1,"b":1})').body[0].expression;
-        var obj1 = utils.ast.createObject();
-        var obj2 = utils.ast.createObject({ a: 1, b: 1 });
-
-        assert.deepEqual(obj1, token1);
-        assert.deepEqual(obj2, token2);
-    });
-
-    it('#parse', function() {
-        assert.deepEqual(utils.ast.parse('var a = 10'), esprima.parse('var a = 10').body[0]);
-    });
-
-    it('#translate', function() {
-        assert.equal(utils.ast.translate(utils.ast.parse('var a = 10;')), 'var a = 10;');
-    });
 });
