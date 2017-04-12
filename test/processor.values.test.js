@@ -788,6 +788,205 @@ describe('Processor.values', function() {
                 assert.isFalse(rootScope.getReference('a').value);
             });
         });
+
+        describe('unary expression', function() {
+            it('assignment from unary expression - literal', function() {
+                var code = '\
+                    var a = -1;\
+                    var b = -(-1);\
+                    var c = +1;\
+                    var d = +-1;\
+                    var e = !1;\
+                    var f = !!1;\
+                    var g = ~1;\
+                    var h = typeof 1;\
+                    var i = void 1;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, -1);
+                assert.strictEqual(rootScope.getReference('b').value, -(-1));
+                assert.strictEqual(rootScope.getReference('c').value, +1);
+                assert.strictEqual(rootScope.getReference('d').value, +-1);
+                assert.strictEqual(rootScope.getReference('e').value, !1);
+                assert.strictEqual(rootScope.getReference('f').value, !!1);
+                assert.strictEqual(rootScope.getReference('g').value, ~1);
+                assert.strictEqual(rootScope.getReference('h').value, typeof 1);
+                assert.strictEqual(rootScope.getReference('i').value, void 1);
+            });
+
+            it('assignment from unary expression - identifier', function() {
+                var code = '\
+                    var one = 1;\
+                    var a = -one;\
+                    var b = -(-one);\
+                    var c = +one;\
+                    var d = +-one;\
+                    var e = !one;\
+                    var f = !!one;\
+                    var g = ~one;\
+                    var h = typeof one;\
+                    var i = void one;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, -1);
+                assert.strictEqual(rootScope.getReference('b').value, -(-1));
+                assert.strictEqual(rootScope.getReference('c').value, +1);
+                assert.strictEqual(rootScope.getReference('d').value, +-1);
+                assert.strictEqual(rootScope.getReference('e').value, !1);
+                assert.strictEqual(rootScope.getReference('f').value, !!1);
+                assert.strictEqual(rootScope.getReference('g').value, ~1);
+                assert.strictEqual(rootScope.getReference('h').value, typeof 1);
+                assert.strictEqual(rootScope.getReference('i').value, void 1);
+            });
+
+            it('assignment from unary expression - member expression', function() {
+                var code = '\
+                    var obj = { a: { b: { c: 1 } } };\
+                    var a = -obj.a.b.c;\
+                    var b = -(-obj.a.b.c);\
+                    var c = +obj.a.b.c;\
+                    var d = +-obj.a.b.c;\
+                    var e = !obj.a.b.c;\
+                    var f = !!obj.a.b.c;\
+                    var g = ~obj.a.b.c;\
+                    var h = typeof obj.a.b.c;\
+                    var i = void obj.a.b.c;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, -1);
+                assert.strictEqual(rootScope.getReference('b').value, -(-1));
+                assert.strictEqual(rootScope.getReference('c').value, +1);
+                assert.strictEqual(rootScope.getReference('d').value, +-1);
+                assert.strictEqual(rootScope.getReference('e').value, !1);
+                assert.strictEqual(rootScope.getReference('f').value, !!1);
+                assert.strictEqual(rootScope.getReference('g').value, ~1);
+                assert.strictEqual(rootScope.getReference('h').value, typeof 1);
+                assert.strictEqual(rootScope.getReference('i').value, void 1);
+            });
+
+            it('assignment from unary expression - object expression + member expression', function() {
+                var code = '\
+                    var a = -{ a: { b: { c: 1 } } }.a.b.c;\
+                    var b = -(-{ a: { b: { c: 1 } } }.a.b.c);\
+                    var c = +{ a: { b: { c: 1 } } }.a.b.c;\
+                    var d = +-{ a: { b: { c: 1 } } }.a.b.c;\
+                    var e = !{ a: { b: { c: 1 } } }.a.b.c;\
+                    var f = !!{ a: { b: { c: 1 } } }.a.b.c;\
+                    var g = ~{ a: { b: { c: 1 } } }.a.b.c;\
+                    var h = typeof { a: { b: { c: 1 } } }.a.b.c;\
+                    var i = void { a: { b: { c: 1 } } }.a.b.c;\
+                ';
+                var ast = esprima.parse(code);
+
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('a').value, -1);
+                assert.strictEqual(rootScope.getReference('b').value, -(-1));
+                assert.strictEqual(rootScope.getReference('c').value, +1);
+                assert.strictEqual(rootScope.getReference('d').value, +-1);
+                assert.strictEqual(rootScope.getReference('e').value, !1);
+                assert.strictEqual(rootScope.getReference('f').value, !!1);
+                assert.strictEqual(rootScope.getReference('g').value, ~1);
+                assert.strictEqual(rootScope.getReference('h').value, typeof 1);
+                assert.strictEqual(rootScope.getReference('i').value, void 1);
+            });
+
+            describe('delete', function() {
+                it('literal', function() {
+                    var code = '\
+                        var a = delete 1\
+                    ';
+                    var ast = esprima.parse(code);
+
+                    processNames(ast, rootScope);
+                    processValues(ast);
+
+                    assert.isTrue(rootScope.getReference('a').value);
+                });
+
+                it('identifier', function() {
+                    var code = '\
+                        var prop = 1;\
+                        var a = delete prop\
+                    ';
+                    var ast = esprima.parse(code);
+
+                    processNames(ast, rootScope);
+                    processValues(ast);
+
+                    assert.isTrue(rootScope.getReference('a').value);
+                });
+
+                it('member expression', function() {
+                    var code = '\
+                        var obj = { a: { b: { c: 1 } } };\
+                        var a = delete obj.a.b.c;\
+                        var b = obj.a.b.c;\
+                    ';
+                    var ast = esprima.parse(code);
+
+                    processNames(ast, rootScope);
+                    processValues(ast);
+
+                    assert.isTrue(rootScope.getReference('a').value);
+                    assert.isUndefined(rootScope.getReference('b').value);
+                });
+
+                it('computed member expression', function() {
+                    var code = '\
+                        var prop = \'c\';\
+                        var obj = { a: { b: { c: 1 } } };\
+                        var a = delete obj.a.b[prop];\
+                        var b = obj.a.b.c;\
+                    ';
+                    var ast = esprima.parse(code);
+
+                    processNames(ast, rootScope);
+                    processValues(ast);
+
+                    assert.isTrue(rootScope.getReference('a').value);
+                    assert.isUndefined(rootScope.getReference('b').value);
+                });
+
+                it('undefined member expression', function() {
+                    var code = '\
+                        var obj = { a: { b: { c: 1 } } };\
+                        var a = delete obj.a.b.d;\
+                    ';
+                    var ast = esprima.parse(code);
+
+                    processNames(ast, rootScope);
+                    processValues(ast);
+
+                    assert.isTrue(rootScope.getReference('a').value);
+                });
+
+                it('undefined identifier', function() {
+                    var code = '\
+                        var a = delete obj.a.b.d;\
+                    ';
+                    var ast = esprima.parse(code);
+
+                    processNames(ast, rootScope);
+                    processValues(ast);
+
+                    assert.isTrue(rootScope.getReference('a').value);
+                });
+            })
+        });
     });
 
     describe('object expression', function() {
