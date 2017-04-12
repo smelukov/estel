@@ -659,4 +659,45 @@ describe('Processor.names', function() {
             assert.isTrue(m1Scope.hasOwnReference('b'));
         });
     });
+
+    describe('import', function() {
+        // ImportSpecifier
+        // ImportDefaultSpecifier
+        // ImportNamespaceSpecifier
+        it('ImportSpecifier', function() {
+            var code = 'import {a, b, c} from \'some\'';
+
+            process(esprima.parse(code), rootScope);
+            assert.equal(rootScope.countReferences(), 3);
+            assert.equal(rootScope.countOwnReferences(), 3);
+
+            assert.isTrue(rootScope.hasOwnReference('a'));
+            assert.isTrue(rootScope.hasOwnReference('b'));
+            assert.isTrue(rootScope.hasOwnReference('c'));
+        });
+
+        it('ImportDefaultSpecifier', function() {
+            var code = 'import a from \'some\'';
+
+            process(esprima.parse(code), rootScope);
+            assert.equal(rootScope.countReferences(), 3);
+            assert.equal(rootScope.countOwnReferences(), 3);
+
+            assert.isTrue(rootScope.hasOwnReference('a'));
+            assert.isTrue(rootScope.hasOwnReference('b'));
+            assert.isTrue(rootScope.hasOwnReference('c'));
+        });
+
+        it('ImportNamespaceSpecifier', function() {
+            var code = 'import * as d from \'some\'';
+
+            process(esprima.parse(code), rootScope);
+            assert.equal(rootScope.countReferences(), 3);
+            assert.equal(rootScope.countOwnReferences(), 3);
+
+            assert.isTrue(rootScope.hasOwnReference('a'));
+            assert.isTrue(rootScope.hasOwnReference('b'));
+            assert.isTrue(rootScope.hasOwnReference('c'));
+        });
+    });
 });
