@@ -1,4 +1,4 @@
-var esprima = require('esprima');
+var parser = require('../lib/parser');
 var assert = require('chai').assert;
 var Scope = require('../lib/scope');
 var process = require('../lib/namesProcessor');
@@ -12,7 +12,7 @@ describe('Processor.names', function() {
 
     describe('var', function() {
         it('simple case', function() {
-            process(esprima.parse('var a = 10, b = 20, c; var d = 30;'), rootScope);
+            process(parser.parse('var a = 10, b = 20, c; var d = 30;'), rootScope);
             assert.equal(rootScope.countReferences(), 4);
             assert.equal(rootScope.scopes.length, 0);
 
@@ -23,7 +23,7 @@ describe('Processor.names', function() {
         });
 
         it('inside if', function() {
-            process(esprima.parse('var a = 10; if (1) { var a = 20; var b = 30; }'), rootScope);
+            process(parser.parse('var a = 10; if (1) { var a = 20; var b = 30; }'), rootScope);
             assert.equal(rootScope.countReferences(), 2);
             assert.equal(rootScope.countOwnReferences(), 2);
             assert.equal(rootScope.scopes.length, 1);
@@ -39,7 +39,7 @@ describe('Processor.names', function() {
         });
 
         it('inside for', function() {
-            process(esprima.parse('var a = 10; for(var i = 0; i < 2; i++){ var b = 20; }'), rootScope);
+            process(parser.parse('var a = 10; for(var i = 0; i < 2; i++){ var b = 20; }'), rootScope);
             assert.equal(rootScope.countReferences(), 3);
             assert.equal(rootScope.countOwnReferences(), 3);
             assert.equal(rootScope.scopes.length, 1);
@@ -62,7 +62,7 @@ describe('Processor.names', function() {
         });
 
         it('inside while', function() {
-            process(esprima.parse('var a = 10; while(1){ var b = 20; }'), rootScope);
+            process(parser.parse('var a = 10; while(1){ var b = 20; }'), rootScope);
             assert.equal(rootScope.countReferences(), 2);
             assert.equal(rootScope.scopes.length, 1);
 
@@ -77,7 +77,7 @@ describe('Processor.names', function() {
         });
 
         it('inside switch', function() {
-            process(esprima.parse('switch(1){ case 1: var a = 10; case 2: var b = 20; }'), rootScope);
+            process(parser.parse('switch(1){ case 1: var a = 10; case 2: var b = 20; }'), rootScope);
             assert.equal(rootScope.countReferences(), 2);
             assert.equal(rootScope.scopes.length, 1);
 
@@ -94,7 +94,7 @@ describe('Processor.names', function() {
 
     describe('let/const', function() {
         it('simple case', function() {
-            process(esprima.parse('let a = 10, b; const c = 20, d = 30;'), rootScope);
+            process(parser.parse('let a = 10, b; const c = 20, d = 30;'), rootScope);
             assert.equal(rootScope.countReferences(), 4);
             assert.equal(rootScope.scopes.length, 0);
 
@@ -105,7 +105,7 @@ describe('Processor.names', function() {
         });
 
         it('inside if', function() {
-            process(esprima.parse('var a = 10; if (1) { let a = 20; const b = 30; var c = 40; }'), rootScope);
+            process(parser.parse('var a = 10; if (1) { let a = 20; const b = 30; var c = 40; }'), rootScope);
             assert.equal(rootScope.countReferences(), 2);
             assert.equal(rootScope.countOwnReferences(), 2);
             assert.equal(rootScope.scopes.length, 1);
@@ -124,7 +124,7 @@ describe('Processor.names', function() {
         });
 
         it('inside for', function() {
-            process(esprima.parse('for(let i = 0; i < 2; i++){ let b = 20; const c = 30 }'), rootScope);
+            process(parser.parse('for(let i = 0; i < 2; i++){ let b = 20; const c = 30 }'), rootScope);
             assert.equal(rootScope.countReferences(), 0);
             assert.equal(rootScope.scopes.length, 1);
 
@@ -151,7 +151,7 @@ describe('Processor.names', function() {
         });
 
         it('inside while', function() {
-            process(esprima.parse('while(1){ let a = 10; const b = 20; var c = 30; }'), rootScope);
+            process(parser.parse('while(1){ let a = 10; const b = 20; var c = 30; }'), rootScope);
             assert.equal(rootScope.countReferences(), 1);
             assert.equal(rootScope.scopes.length, 1);
 
@@ -168,7 +168,7 @@ describe('Processor.names', function() {
         });
 
         it('inside catch', function() {
-            process(esprima.parse('try { var a = 10; let b = 20; } catch(e) { var c = 30; let d = 40; }'), rootScope);
+            process(parser.parse('try { var a = 10; let b = 20; } catch(e) { var c = 30; let d = 40; }'), rootScope);
             assert.equal(rootScope.countReferences(), 2);
             assert.equal(rootScope.scopes.length, 2);
 
@@ -195,7 +195,7 @@ describe('Processor.names', function() {
 
         describe('inside switch', function() {
             it('without block', function() {
-                process(esprima.parse('switch(1){ case 1: var a = 10; let b = 20; case 2: const c = 30; }'), rootScope);
+                process(parser.parse('switch(1){ case 1: var a = 10; let b = 20; case 2: const c = 30; }'), rootScope);
                 assert.equal(rootScope.countReferences(), 1);
                 assert.equal(rootScope.scopes.length, 1);
 
@@ -218,7 +218,7 @@ describe('Processor.names', function() {
                         case 2: const c = 30;\
                     }';
 
-                process(esprima.parse(code), rootScope);
+                process(parser.parse(code), rootScope);
                 assert.equal(rootScope.countReferences(), 1);
                 assert.equal(rootScope.countOwnReferences(), 1);
                 assert.equal(rootScope.scopes.length, 1);
@@ -252,7 +252,7 @@ describe('Processor.names', function() {
                 function F3(j, k) { var l = 60; if (1) { var m = 70; let n = 80; let a = 90 } }\
                 ';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 3);
             assert.equal(rootScope.countOwnReferences(), 3);
             assert.equal(rootScope.scopes.length, 2);
@@ -338,7 +338,7 @@ describe('Processor.names', function() {
                 var F3 = function F3Private(j, k) { var l = 60; if (1) { var m = 70; let n = 80; let a = 90 } }\
                 ';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 3);
             assert.equal(rootScope.countOwnReferences(), 3);
             assert.equal(rootScope.scopes.length, 2);
@@ -427,7 +427,7 @@ describe('Processor.names', function() {
                 })()\
                 ';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 0);
             assert.equal(rootScope.countOwnReferences(), 0);
             assert.equal(rootScope.scopes.length, 1);
@@ -489,7 +489,7 @@ describe('Processor.names', function() {
                 })()\
                 ';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 0);
             assert.equal(rootScope.countOwnReferences(), 0);
             assert.equal(rootScope.scopes.length, 1);
@@ -552,7 +552,7 @@ describe('Processor.names', function() {
                 class C1 { m1() { var b = 20; } m2() { var c = 30; } }\
                 ';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 2);
             assert.equal(rootScope.countOwnReferences(), 2);
             assert.equal(rootScope.scopes.length, 1);
@@ -591,7 +591,7 @@ describe('Processor.names', function() {
                 var C1 = class C1Private { m1() { var b = 20; } m2() { var c = 30; } }\
                 ';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 2);
             assert.equal(rootScope.countOwnReferences(), 2);
             assert.equal(rootScope.scopes.length, 1);
@@ -632,7 +632,7 @@ describe('Processor.names', function() {
                 }\
                 ';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 0);
             assert.equal(rootScope.countOwnReferences(), 0);
             assert.equal(rootScope.scopes.length, 1);
@@ -661,13 +661,10 @@ describe('Processor.names', function() {
     });
 
     describe('import', function() {
-        // ImportSpecifier
-        // ImportDefaultSpecifier
-        // ImportNamespaceSpecifier
         it('ImportSpecifier', function() {
             var code = 'import {a, b, c as d} from \'some\'';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code, { sourceType: 'module' }), rootScope);
             assert.equal(rootScope.countReferences(), 3);
             assert.equal(rootScope.countOwnReferences(), 3);
 
@@ -679,7 +676,7 @@ describe('Processor.names', function() {
         it('ImportDefaultSpecifier', function() {
             var code = 'import a from \'some\'';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code, { sourceType: 'module' }), rootScope);
             assert.equal(rootScope.countReferences(), 1);
             assert.equal(rootScope.countOwnReferences(), 1);
 
@@ -689,7 +686,7 @@ describe('Processor.names', function() {
         it('ImportNamespaceSpecifier', function() {
             var code = 'import * as a from \'some\'';
 
-            process(esprima.parse(code), rootScope);
+            process(parser.parse(code, { sourceType: 'module' }), rootScope);
             assert.equal(rootScope.countReferences(), 1);
             assert.equal(rootScope.countOwnReferences(), 1);
 

@@ -1,4 +1,4 @@
-var esprima = require('esprima');
+var parser = require('../lib/parser');
 var assert = require('chai').assert;
 var Scope = require('../lib/scope');
 var processNames = require('../lib/namesProcessor');
@@ -14,7 +14,7 @@ describe('Processor.values', function() {
     describe('var declaration', function() {
         it('empty declaration', function() {
             var code = 'var a; var b';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -25,7 +25,7 @@ describe('Processor.values', function() {
 
         it('assignment literal', function() {
             var code = 'var a = 10; var b = 20';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -36,7 +36,7 @@ describe('Processor.values', function() {
 
         it('assignment identifier', function() {
             var code = 'var a = 10; var b = a';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -47,7 +47,7 @@ describe('Processor.values', function() {
 
         it('assignment form member expression', function() {
             var code = 'var a = { b: 1, c: { d: 1, e: 2 } }; var b = a.c.d';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -57,7 +57,7 @@ describe('Processor.values', function() {
 
         it('assignment form object', function() {
             var code = 'var a = { b: 1, c: { d: 1, e: 2 } }, b = a, c = b.c.d';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -70,7 +70,7 @@ describe('Processor.values', function() {
     describe('assignment', function() {
         it('assignment literal', function() {
             var code = 'var a = 10; var b; b = 20';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -81,7 +81,7 @@ describe('Processor.values', function() {
 
         it('assignment identifier', function() {
             var code = 'var a = 10; var b; b = a';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -92,7 +92,7 @@ describe('Processor.values', function() {
 
         it('assignment literal to member expression', function() {
             var code = 'var a = { b: 1, c: { d: 1, e: 2 } }; a.c.d = 20; var b = a.c.d;';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -103,7 +103,7 @@ describe('Processor.values', function() {
 
         it('assignment literal to computed (literal) member expression', function() {
             var code = 'var a = { b: 1, 1: { d: 1, e: 2 } }; a[1].d = 20; var b = a[1].d;';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -114,7 +114,7 @@ describe('Processor.values', function() {
 
         it('assignment literal to computed (literal - last) member expression', function() {
             var code = 'var a = { b: 1, c: { 1: 1, e: 2 } }; a.c[1] = 20; var b = a.c[1];';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -125,7 +125,7 @@ describe('Processor.values', function() {
 
         it('assignment identifier to member expression', function() {
             var code = 'var a = { b: 1, c: { d: 1, e: 2 } }, newValue = 20; a.c.d = newValue; var b = a.c.d;';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -136,7 +136,7 @@ describe('Processor.values', function() {
 
         it('assignment identifier to undefined member expression', function() {
             var code = 'var a = { b: 1, c: { d: 1, e: 2 } }, newValue = 20; a.e.d = newValue; var b = a.e.d;';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -147,7 +147,7 @@ describe('Processor.values', function() {
 
         it('assignment identifier to undefined identifier with member expression', function() {
             var code = 'var newValue = 20; a.e.d = newValue; var b = a.e.d;';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -162,7 +162,7 @@ describe('Processor.values', function() {
                 newValue = 20;\
                 a[prop].d = newValue;\
                 var b = a[prop].d;';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -177,7 +177,7 @@ describe('Processor.values', function() {
                 newValue = 20;\
                 a.c[prop] = newValue;\
                 var b = a.c[prop];';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -192,7 +192,7 @@ describe('Processor.values', function() {
                 a.c.d = { e: 20, f: 30 };\
                 var b = a.c.d,\
                     c = a.c.d.e';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -209,7 +209,7 @@ describe('Processor.values', function() {
                 a.c.d = newValue;\
                 var b = a.c.d,\
                     c = a.c.d.e';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -231,7 +231,7 @@ describe('Processor.values', function() {
                 var a = obj1.c.d;\
                 var b = obj2.f.g;\
                 var c = obj2.f.h';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -245,7 +245,7 @@ describe('Processor.values', function() {
 
         it('auto create left reference', function() {
             var code = 'a = 10';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -255,7 +255,7 @@ describe('Processor.values', function() {
 
         it('assignment from undefined reference', function() {
             var code = 'var a = b';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -266,7 +266,7 @@ describe('Processor.values', function() {
 
         it('multi assignment - literal;', function() {
             var code = 'a = b = c = 1';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -278,7 +278,7 @@ describe('Processor.values', function() {
 
         it('multi assignment - identifier;', function() {
             var code = 'a = 1; b = c = d = a';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -291,7 +291,7 @@ describe('Processor.values', function() {
 
         it('multi assignment - member expression', function() {
             var code = 'var obj = { a: { b: 1 } }; a = b = obj.a.b = c = 10; d = obj.a.b';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -330,7 +330,7 @@ describe('Processor.values', function() {
                     var t = 2 >= 3;\
                     var u = 2 in { 2: 3 };\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -384,7 +384,7 @@ describe('Processor.values', function() {
                     var t = left >= right;\
                     var u = left in { [left]: right };\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -438,7 +438,7 @@ describe('Processor.values', function() {
                     var t = obj.a.b.c.d >= right;\
                     var u = obj.a.b.c.d in { 2: right };\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -493,7 +493,7 @@ describe('Processor.values', function() {
                     var t = obj.a.b.c[prop] >= right;\
                     var u = obj.a.b.c[prop] in { 2: right };\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -546,7 +546,7 @@ describe('Processor.values', function() {
                     var t = { a: { b: { c: 2 } } }.a.b.c >= right;\
                     var u = { a: { b: { c: 2 } } }.a.b.c in { 2: right };\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -598,7 +598,7 @@ describe('Processor.values', function() {
                     var t = (1 + 1) >= (2 + 1);\
                     var u = (1 + 1) in { 2: 3 };\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -652,7 +652,7 @@ describe('Processor.values', function() {
                     var t = (one + one) >= (two + one);\
                     var u = (one + one) in { [one + one]: two + one };\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -705,7 +705,7 @@ describe('Processor.values', function() {
                     var t = ({ a: { b: { c: 1 } } }.a.b.c + 1) >= right;\
                     var u = ({ a: { b: { c: 1 } } }.a.b.c + 1) in { 2: right };\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -758,7 +758,7 @@ describe('Processor.values', function() {
                     var t = (some1 + some2) >= right;\
                     var u = (some1 + some2) in { 2: right };\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -791,7 +791,7 @@ describe('Processor.values', function() {
                 var code = '\
                     var a = 1 in { 1: 1 };\
                 ';
-                var ast = esprima.parse(code);
+                var ast = parser.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
@@ -817,7 +817,7 @@ describe('Processor.values', function() {
                     var d = \'prop\' in class1;\
                     var e = \'prop\' in class2;\
                 ';
-                var ast = esprima.parse(code);
+                var ast = parser.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
@@ -833,7 +833,7 @@ describe('Processor.values', function() {
                 var code = '\
                     var a = 1 in null;\
                 ';
-                var ast = esprima.parse(code);
+                var ast = parser.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
@@ -856,7 +856,7 @@ describe('Processor.values', function() {
                     var h = typeof 1;\
                     var i = void 1;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -885,7 +885,7 @@ describe('Processor.values', function() {
                     var h = typeof one;\
                     var i = void one;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -914,7 +914,7 @@ describe('Processor.values', function() {
                     var h = typeof obj.a.b.c;\
                     var i = void obj.a.b.c;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -944,7 +944,7 @@ describe('Processor.values', function() {
                     var h = typeof obj.a.b[prop];\
                     var i = void obj.a.b[prop];\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -972,7 +972,7 @@ describe('Processor.values', function() {
                     var h = typeof { a: { b: { c: 1 } } }.a.b.c;\
                     var i = void { a: { b: { c: 1 } } }.a.b.c;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -993,7 +993,7 @@ describe('Processor.values', function() {
                 var code = '\
                         var a = delete 1\
                     ';
-                var ast = esprima.parse(code);
+                var ast = parser.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
@@ -1006,7 +1006,7 @@ describe('Processor.values', function() {
                         var prop = 1;\
                         var a = delete prop\
                     ';
-                var ast = esprima.parse(code);
+                var ast = parser.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
@@ -1020,7 +1020,7 @@ describe('Processor.values', function() {
                         var a = delete obj.a.b.c;\
                         var b = obj.a.b.c;\
                     ';
-                var ast = esprima.parse(code);
+                var ast = parser.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
@@ -1036,7 +1036,7 @@ describe('Processor.values', function() {
                         var a = delete obj.a.b[prop];\
                         var b = obj.a.b.c;\
                     ';
-                var ast = esprima.parse(code);
+                var ast = parser.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
@@ -1050,7 +1050,7 @@ describe('Processor.values', function() {
                         var obj = { a: { b: { c: 1 } } };\
                         var a = delete obj.a.b.d;\
                     ';
-                var ast = esprima.parse(code);
+                var ast = parser.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
@@ -1062,7 +1062,7 @@ describe('Processor.values', function() {
                 var code = '\
                         var a = delete obj.a.b.d;\
                     ';
-                var ast = esprima.parse(code);
+                var ast = parser.parse(code);
 
                 processNames(ast, rootScope);
                 processValues(ast);
@@ -1081,7 +1081,7 @@ describe('Processor.values', function() {
                     var d = --a;\
                     var e = a--;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1102,7 +1102,7 @@ describe('Processor.values', function() {
                     var e = obj.a.b.c--;\
                     var a = obj.a.b.c\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1124,7 +1124,7 @@ describe('Processor.values', function() {
                     var e = obj.a.b[prop]--;\
                     var a = obj.a.b[prop]\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1143,7 +1143,7 @@ describe('Processor.values', function() {
                     var d = --a;\
                     var e = a--;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1162,7 +1162,7 @@ describe('Processor.values', function() {
                     var d = --obj.a.b.c;\
                     var e = obj.a.b.c--;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1184,7 +1184,7 @@ describe('Processor.values', function() {
                     var d = --obj.a.b.c;\
                     var e = obj.a.b.c--;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1204,7 +1204,7 @@ describe('Processor.values', function() {
                     var c = 1 || 1;\
                     var d = 0 || 1;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1224,7 +1224,7 @@ describe('Processor.values', function() {
                     var c = one || one;\
                     var d = zero || one;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1245,7 +1245,7 @@ describe('Processor.values', function() {
                     var c = obj.a.b.c.d || one;\
                     var d = obj.a.b.c.e || one;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1268,7 +1268,7 @@ describe('Processor.values', function() {
                     var c = obj.a.b.c[propD] || one;\
                     var d = obj.a.b.c[propE] || one;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1288,7 +1288,7 @@ describe('Processor.values', function() {
                     var c = { a: { b: { c: 1 } } }.a.b.c || one;\
                     var d = { a: { b: { c: 0 } } }.a.b.c || one;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1306,7 +1306,7 @@ describe('Processor.values', function() {
                     var c = (1 || 1) || (1 && 1);\
                     var d = (0 || 0) || (1 || 1);\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1326,7 +1326,7 @@ describe('Processor.values', function() {
                     var c = (one || one) || (one && one);\
                     var d = (zero || zero) || (one || one);\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1346,7 +1346,7 @@ describe('Processor.values', function() {
                     var c = ({ a: { b: { c: 1 } } }.a.b.c || 1) || one;\
                     var d = ({ a: { b: { c: 0 } } }.a.b.c || 0) || one;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1366,7 +1366,7 @@ describe('Processor.values', function() {
                     var c = (some1 || some2) || one;\
                     var d = (some1 || some2) || one;\
                 ';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1381,7 +1381,7 @@ describe('Processor.values', function() {
     describe('object expression', function() {
         it('creation', function() {
             var code = 'var obj = { }';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1391,7 +1391,7 @@ describe('Processor.values', function() {
 
         it('key - literal, value - literal', function() {
             var code = 'var obj = { 0: 10, 1: 20 }';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1401,7 +1401,7 @@ describe('Processor.values', function() {
 
         it('key - identifier, value - literal', function() {
             var code = 'var obj = { a: 10, b: 20 }';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1411,7 +1411,7 @@ describe('Processor.values', function() {
 
         it('key - identifier, value - identifier', function() {
             var code = 'var a = 10, b = 20; var obj = { a: a, b }';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1421,7 +1421,7 @@ describe('Processor.values', function() {
 
         it('key - computed, value - identifier', function() {
             var code = 'var a = 10, b = 20; var obj = { [a]: a, b }';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1431,7 +1431,7 @@ describe('Processor.values', function() {
 
         it('key - identifier, value - object expression', function() {
             var code = 'var a = 10, b = 20; var obj = { a: { a, b } }';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
@@ -1441,7 +1441,7 @@ describe('Processor.values', function() {
 
         it('key - undefined identifier, value - undefined identifier', function() {
             var code = 'var obj = { [a]: a, b }';
-            var ast = esprima.parse(code);
+            var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
