@@ -1,5 +1,3 @@
-var esprima = require('esprima');
-var Syntax = esprima.Syntax;
 var assert = require('chai').assert;
 var parser = require('../lib/parser');
 var utils = require('../lib/utils');
@@ -7,19 +5,19 @@ var utils = require('../lib/utils');
 describe('Utils.AST', function() {
     it('#createLiteral', function() {
         assert.deepEqual(utils.ast.createLiteral(10), {
-            type: Syntax.Literal,
+            type: 'Literal',
             value: 10,
             raw: '10'
         });
 
         assert.deepEqual(utils.ast.createLiteral('10'), {
-            type: Syntax.Literal,
+            type: 'Literal',
             value: '10',
             raw: '"10"'
         });
 
         assert.deepEqual(utils.ast.createLiteral(true), {
-            type: Syntax.Literal,
+            type: 'Literal',
             value: true,
             raw: 'true'
         });
@@ -30,7 +28,7 @@ describe('Utils.AST', function() {
 
     it('#createIdentifier', function() {
         assert.deepEqual(utils.ast.createIdentifier('a'), {
-            type: Syntax.Identifier,
+            type: 'Identifier',
             name: 'a'
         });
     });
@@ -42,11 +40,11 @@ describe('Utils.AST', function() {
         var token4 = utils.ast.getFirstExpression(token3);
         var token5 = utils.ast.getFirstExpression(token3.body);
 
-        assert.equal(token1.type, Syntax.FunctionDeclaration);
-        assert.equal(token2.type, Syntax.VariableDeclaration);
-        assert.equal(token3.type, Syntax.ClassDeclaration);
+        assert.equal(token1.type, 'FunctionDeclaration');
+        assert.equal(token2.type, 'VariableDeclaration');
+        assert.equal(token3.type, 'ClassDeclaration');
         assert.isNull(token4);
-        assert.equal(token5.type, Syntax.MethodDefinition);
+        assert.equal(token5.type, 'MethodDefinition');
     });
 
     it('#isFunction', function() {
