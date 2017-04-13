@@ -65,6 +65,27 @@ describe('Processor.values', function() {
             assert.deepEqual(rootScope.getReference('b').value, { b: 1, c: { d: 1, e: 2 } });
             assert.strictEqual(rootScope.getReference('c').value, 1);
         });
+
+        it('assignment form array', function() {
+            var code = '\
+                var a = [1, 2, [3, 4], { a: { b: { c: [5, 6, 7] } } }],\
+                    b = a[0], c = a[2][1], d = a[3].a.b.c[1];\
+                a[3].a.b.c[1] = 2;\
+                a[3].a.b.c[3] = 10;\
+                var e = a[3].a.b.c[1], f = a[3].a.b.c[3], g = a[3].a.b.c[10];';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.deepEqual(rootScope.getReference('a').value, [1, 2, [3, 4], { a: { b: { c: [5, 2, 7, 10] } } }]);
+            assert.strictEqual(rootScope.getReference('b').value, 1);
+            assert.strictEqual(rootScope.getReference('c').value, 4);
+            assert.strictEqual(rootScope.getReference('d').value, 6);
+            assert.strictEqual(rootScope.getReference('e').value, 2);
+            assert.strictEqual(rootScope.getReference('f').value, 10);
+            assert.isUndefined(rootScope.getReference('g').value);
+        });
     });
 
     describe('assignment', function() {
@@ -2319,6 +2340,17 @@ describe('Processor.values', function() {
             processValues(ast);
 
             assert.deepEqual(rootScope.getReference('obj').value, { a: { a: 10, b: 20 } });
+        });
+
+        it('key - array, value - array', function() {
+            var code = 'var a = [1, 2, 3], obj = { [a]: a }; b = obj[a]';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.deepEqual(rootScope.getReference('obj').value, { '1,2,3': [1, 2, 3] });
+            assert.deepEqual(rootScope.getReference('b').value, [1, 2, 3]);
         });
 
         it('key - undefined identifier, value - undefined identifier', function() {
