@@ -1,3 +1,14 @@
+## 0.4.0 (April 13, 2017)
+
+- support BinaryExpression (closes #6)
+- support UnaryExpression (closes #9)
+- support UpdateExpression (closes #12)
+- support LogicalExpression (closes #8)
+- support ArrayExpression (closes #4)
+- support import declaration (create names from import) (closes #11)
+- support more assignment operators (closes #10)
+- fix multi assignment
+
 ## 0.3.0 (April 11, 2017)
 
 - add valueResolver that handles ObjectExpression and resolves tokens
