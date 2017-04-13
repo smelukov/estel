@@ -13,6 +13,7 @@
     "eslint:recommended"
   ],
   "rules": {
+    "semi": "error",
     "no-console": "off",
     "no-cond-assign": "off",
     "space-before-blocks": "error",

@@ -248,174 +248,36 @@ describe('Processor.names', function() {
         it('declaration', function() {
             var code = '\
                 var a = 10;\
-                function F1(b, c) { var d = 20; let e = 30; function F2(f, g) { var h = 40, i = 50; } }\
-                function F3(j, k) { var l = 60; if (1) { var m = 70; let n = 80; let a = 90 } }\
+                function F1() { }\
+                function F3() { }\
                 ';
 
             process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 3);
             assert.equal(rootScope.countOwnReferences(), 3);
-            assert.equal(rootScope.scopes.length, 2);
+            assert.equal(rootScope.scopes.length, 0);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
 
             assert.isTrue(rootScope.hasOwnReference('F1'));
             assert.isTrue(rootScope.hasOwnReference('F3'));
-
-            var f1BodyScope = rootScope.scopes[0];
-
-            assert.equal(f1BodyScope.countReferences(), 9);
-            assert.equal(f1BodyScope.countOwnReferences(), 6);
-            assert.equal(f1BodyScope.scopes.length, 1);
-
-            assert.isTrue(f1BodyScope.hasOwnReference('arguments'));
-
-            assert.isTrue(f1BodyScope.hasOwnReference('b'));
-            assert.isTrue(f1BodyScope.getOwnReference('b').isArg);
-            assert.equal(f1BodyScope.getOwnReference('b').argIndex, 0);
-
-            assert.isTrue(f1BodyScope.hasOwnReference('c'));
-            assert.isTrue(f1BodyScope.getOwnReference('c').isArg);
-            assert.equal(f1BodyScope.getOwnReference('c').argIndex, 1);
-
-            assert.isTrue(f1BodyScope.hasOwnReference('d'));
-            assert.isTrue(f1BodyScope.hasOwnReference('e'));
-
-            var f2BodyScope = f1BodyScope.scopes[0];
-
-            assert.equal(f2BodyScope.countReferences(), 13);
-            assert.equal(f2BodyScope.countOwnReferences(), 5);
-            assert.equal(f2BodyScope.scopes.length, 0);
-
-            assert.isTrue(f2BodyScope.hasOwnReference('arguments'));
-
-            assert.isTrue(f2BodyScope.hasOwnReference('f'));
-            assert.isTrue(f2BodyScope.getOwnReference('f').isArg);
-            assert.equal(f2BodyScope.getOwnReference('f').argIndex, 0);
-
-            assert.isTrue(f2BodyScope.hasOwnReference('g'));
-            assert.isTrue(f2BodyScope.getOwnReference('g').isArg);
-            assert.equal(f2BodyScope.getOwnReference('g').argIndex, 1);
-
-            assert.isTrue(f2BodyScope.hasOwnReference('h'));
-            assert.isTrue(f2BodyScope.hasOwnReference('i'));
-
-            var f3BodyScope = rootScope.scopes[1];
-
-            assert.equal(f3BodyScope.countReferences(), 8);
-            assert.equal(f3BodyScope.countOwnReferences(), 5);
-            assert.equal(f3BodyScope.scopes.length, 1);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('arguments'));
-
-            assert.isTrue(f3BodyScope.hasOwnReference('j'));
-            assert.isTrue(f3BodyScope.getOwnReference('j').isArg);
-            assert.equal(f3BodyScope.getOwnReference('j').argIndex, 0);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('k'));
-            assert.isTrue(f3BodyScope.getOwnReference('k').isArg);
-            assert.equal(f3BodyScope.getOwnReference('k').argIndex, 1);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('l'));
-            assert.isTrue(f3BodyScope.hasOwnReference('m'));
-
-            var f3IfBodyScope = f3BodyScope.scopes[0];
-
-            assert.equal(f3IfBodyScope.countReferences(), 9);
-            assert.equal(f3IfBodyScope.countOwnReferences(), 2);
-            assert.equal(f3IfBodyScope.scopes.length, 0);
-
-            assert.isTrue(f3IfBodyScope.hasOwnReference('n'));
-            assert.isTrue(f3IfBodyScope.hasOwnReference('a'));
         });
 
         it('expression', function() {
             var code = '\
                 var a = 10;\
-                var F1 = function F1Private(b, c) {\
-                    var d = 20; let e = 30; var F2 = function F2Private(f, g) { var h = 40, i = 50; }\
-                };\
-                var F3 = function F3Private(j, k) { var l = 60; if (1) { var m = 70; let n = 80; let a = 90 } }\
+                var F1 = function () { };\
+                var F3 = function F3Private() { }\
                 ';
 
             process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 3);
             assert.equal(rootScope.countOwnReferences(), 3);
-            assert.equal(rootScope.scopes.length, 2);
+            assert.equal(rootScope.scopes.length, 0);
 
             assert.isTrue(rootScope.hasOwnReference('a'));
             assert.isTrue(rootScope.hasOwnReference('F1'));
             assert.isTrue(rootScope.hasOwnReference('F3'));
-
-            var f1BodyScope = rootScope.scopes[0];
-
-            assert.equal(f1BodyScope.countReferences(), 10);
-            assert.equal(f1BodyScope.countOwnReferences(), 7);
-            assert.equal(f1BodyScope.scopes.length, 1);
-
-            assert.isTrue(f1BodyScope.hasOwnReference('F1Private'));
-            assert.isTrue(f1BodyScope.hasOwnReference('arguments'));
-
-            assert.isTrue(f1BodyScope.hasOwnReference('b'));
-            assert.isTrue(f1BodyScope.getOwnReference('b').isArg);
-            assert.equal(f1BodyScope.getOwnReference('b').argIndex, 0);
-
-            assert.isTrue(f1BodyScope.hasOwnReference('c'));
-            assert.isTrue(f1BodyScope.getOwnReference('c').isArg);
-            assert.equal(f1BodyScope.getOwnReference('c').argIndex, 1);
-
-            assert.isTrue(f1BodyScope.hasOwnReference('d'));
-            assert.isTrue(f1BodyScope.hasOwnReference('e'));
-
-            var f2BodyScope = f1BodyScope.scopes[0];
-
-            assert.equal(f2BodyScope.countReferences(), 15);
-            assert.equal(f2BodyScope.countOwnReferences(), 6);
-            assert.equal(f2BodyScope.scopes.length, 0);
-
-            assert.isTrue(f2BodyScope.hasOwnReference('F2Private'));
-            assert.isTrue(f2BodyScope.hasReference('F1Private'));
-            assert.isTrue(f2BodyScope.hasOwnReference('arguments'));
-
-            assert.isTrue(f2BodyScope.hasOwnReference('f'));
-            assert.isTrue(f2BodyScope.getOwnReference('f').isArg);
-            assert.equal(f2BodyScope.getOwnReference('f').argIndex, 0);
-
-            assert.isTrue(f2BodyScope.hasOwnReference('g'));
-            assert.isTrue(f2BodyScope.getOwnReference('g').isArg);
-            assert.equal(f2BodyScope.getOwnReference('g').argIndex, 1);
-
-            assert.isTrue(f2BodyScope.hasOwnReference('h'));
-            assert.isTrue(f2BodyScope.hasOwnReference('i'));
-
-            var f3BodyScope = rootScope.scopes[1];
-
-            assert.equal(f3BodyScope.countReferences(), 9);
-            assert.equal(f3BodyScope.countOwnReferences(), 6);
-            assert.equal(f3BodyScope.scopes.length, 1);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('F3Private'));
-            assert.isTrue(f3BodyScope.hasOwnReference('arguments'));
-
-            assert.isTrue(f3BodyScope.hasOwnReference('j'));
-            assert.isTrue(f3BodyScope.getOwnReference('j').isArg);
-            assert.equal(f3BodyScope.getOwnReference('j').argIndex, 0);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('k'));
-            assert.isTrue(f3BodyScope.getOwnReference('k').isArg);
-            assert.equal(f3BodyScope.getOwnReference('k').argIndex, 1);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('l'));
-            assert.isTrue(f3BodyScope.hasOwnReference('m'));
-
-            var f3IfBodyScope = f3BodyScope.scopes[0];
-
-            assert.equal(f3IfBodyScope.countReferences(), 10);
-            assert.equal(f3IfBodyScope.countOwnReferences(), 2);
-            assert.equal(f3IfBodyScope.scopes.length, 0);
-
-            assert.isTrue(f3IfBodyScope.hasOwnReference('n'));
-            assert.isTrue(f3IfBodyScope.hasOwnReference('a'));
         });
 
         it('iife', function() {
@@ -423,124 +285,27 @@ describe('Processor.names', function() {
                 (function F1() {\
                     var a = 10;\
                     function F2() { }\
-                    var F3 = function F3Private(j, k) { var l = 60; if (1) { var m = 70; let n = 80; let a = 90 } }\
+                    var F3 = function F3Private() { }\
                 })()\
                 ';
 
             process(parser.parse(code), rootScope);
             assert.equal(rootScope.countReferences(), 0);
             assert.equal(rootScope.countOwnReferences(), 0);
-            assert.equal(rootScope.scopes.length, 1);
-
-            var f1BodyScope = rootScope.scopes[0];
-
-            assert.equal(f1BodyScope.countReferences(), 5);
-            assert.equal(f1BodyScope.countOwnReferences(), 5);
-            assert.equal(f1BodyScope.scopes.length, 2);
-
-            assert.isTrue(f1BodyScope.hasOwnReference('F1'));
-            assert.isTrue(f1BodyScope.hasOwnReference('F2'));
-            assert.isTrue(f1BodyScope.hasOwnReference('F3'));
-            assert.isTrue(f1BodyScope.hasOwnReference('arguments'));
-            assert.isTrue(f1BodyScope.hasOwnReference('a'));
-
-            var f2BodyScope = f1BodyScope.scopes[0];
-
-            assert.equal(f2BodyScope.countReferences(), 5);
-            assert.equal(f2BodyScope.countOwnReferences(), 1);
-            assert.equal(f2BodyScope.scopes.length, 0);
-
-            var f3BodyScope = f1BodyScope.scopes[1];
-
-            assert.equal(f3BodyScope.countReferences(), 10);
-            assert.equal(f3BodyScope.countOwnReferences(), 6);
-            assert.equal(f3BodyScope.scopes.length, 1);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('F3Private'));
-            assert.isTrue(f3BodyScope.hasOwnReference('arguments'));
-
-            assert.isTrue(f3BodyScope.hasOwnReference('j'));
-            assert.isTrue(f3BodyScope.getOwnReference('j').isArg);
-            assert.equal(f3BodyScope.getOwnReference('j').argIndex, 0);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('k'));
-            assert.isTrue(f3BodyScope.getOwnReference('k').isArg);
-            assert.equal(f3BodyScope.getOwnReference('k').argIndex, 1);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('l'));
-            assert.isTrue(f3BodyScope.hasOwnReference('m'));
-
-            var f3IfBodyScope = f3BodyScope.scopes[0];
-
-            assert.equal(f3IfBodyScope.countReferences(), 11);
-            assert.equal(f3IfBodyScope.countOwnReferences(), 2);
-            assert.equal(f3IfBodyScope.scopes.length, 0);
-
-            assert.isTrue(f3IfBodyScope.hasOwnReference('n'));
-            assert.isTrue(f3IfBodyScope.hasOwnReference('a'));
+            assert.equal(rootScope.scopes.length, 0);
         });
 
         it('arrow function', function() {
             var code = '\
-                (function F1() {\
-                    var a = 10;\
-                    var F2 = () => { };\
-                    var F3 = (j, k) => { var l = 60; if (1) { var m = 70; let n = 80; let a = 90 } }\
-                })()\
+                var a = 10;\
+                var F2 = () => { };\
+                var F3 = () => { }\
                 ';
 
             process(parser.parse(code), rootScope);
-            assert.equal(rootScope.countReferences(), 0);
-            assert.equal(rootScope.countOwnReferences(), 0);
-            assert.equal(rootScope.scopes.length, 1);
-
-            var f1BodyScope = rootScope.scopes[0];
-
-            assert.equal(f1BodyScope.countReferences(), 5);
-            assert.equal(f1BodyScope.countOwnReferences(), 5);
-            assert.equal(f1BodyScope.scopes.length, 2);
-
-            assert.isTrue(f1BodyScope.hasOwnReference('F1'));
-            assert.isTrue(f1BodyScope.hasOwnReference('F2'));
-            assert.isTrue(f1BodyScope.hasOwnReference('F3'));
-            assert.isTrue(f1BodyScope.hasOwnReference('arguments'));
-
-            assert.isTrue(f1BodyScope.hasOwnReference('a'));
-
-            var f2BodyScope = f1BodyScope.scopes[0];
-
-            assert.equal(f2BodyScope.countReferences(), 5);
-            assert.equal(f2BodyScope.countOwnReferences(), 0);
-            assert.strictEqual(f2BodyScope.getReference('arguments'), f1BodyScope.getOwnReference('arguments'));
-            assert.equal(f2BodyScope.scopes.length, 0);
-
-            var f3BodyScope = f1BodyScope.scopes[1];
-
-            assert.equal(f3BodyScope.countReferences(), 9);
-            assert.equal(f3BodyScope.countOwnReferences(), 4);
-            assert.equal(f3BodyScope.scopes.length, 1);
-
-            assert.strictEqual(f2BodyScope.getReference('arguments'), f1BodyScope.getOwnReference('arguments'));
-
-            assert.isTrue(f3BodyScope.hasOwnReference('j'));
-            assert.isTrue(f3BodyScope.getOwnReference('j').isArg);
-            assert.equal(f3BodyScope.getOwnReference('j').argIndex, 0);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('k'));
-            assert.isTrue(f3BodyScope.getOwnReference('k').isArg);
-            assert.equal(f3BodyScope.getOwnReference('k').argIndex, 1);
-
-            assert.isTrue(f3BodyScope.hasOwnReference('l'));
-            assert.isTrue(f3BodyScope.hasOwnReference('m'));
-
-            var f3IfBodyScope = f3BodyScope.scopes[0];
-
-            assert.equal(f3IfBodyScope.countReferences(), 10);
-            assert.equal(f3IfBodyScope.countOwnReferences(), 2);
-            assert.equal(f3IfBodyScope.scopes.length, 0);
-
-            assert.isTrue(f3IfBodyScope.hasOwnReference('n'));
-            assert.isTrue(f3IfBodyScope.hasOwnReference('a'));
+            assert.equal(rootScope.countReferences(), 3);
+            assert.equal(rootScope.countOwnReferences(), 3);
+            assert.equal(rootScope.scopes.length, 0);
         });
 
     });
@@ -549,7 +314,7 @@ describe('Processor.names', function() {
         it('declaration', function() {
             var code = '\
                 var a = 10;\
-                class C1 { m1() { var b = 20; } m2() { var c = 30; } }\
+                class C1 { }\
                 ';
 
             process(parser.parse(code), rootScope);
@@ -559,36 +324,12 @@ describe('Processor.names', function() {
 
             assert.isTrue(rootScope.hasOwnReference('a'));
             assert.isTrue(rootScope.hasOwnReference('C1'));
-
-            var classScope = rootScope.scopes[0];
-
-            assert.equal(classScope.countReferences(), 2);
-            assert.equal(classScope.countOwnReferences(), 0);
-            assert.equal(classScope.scopes.length, 2);
-
-            var m1Scope = classScope.scopes[0];
-
-            assert.equal(m1Scope.countReferences(), 4);
-            assert.equal(m1Scope.countOwnReferences(), 2);
-            assert.equal(m1Scope.scopes.length, 0);
-
-            assert.isTrue(m1Scope.hasOwnReference('arguments'));
-            assert.isTrue(m1Scope.hasOwnReference('b'));
-
-            var m2Scope = classScope.scopes[1];
-
-            assert.equal(m2Scope.countReferences(), 4);
-            assert.equal(m2Scope.countOwnReferences(), 2);
-            assert.equal(m2Scope.scopes.length, 0);
-
-            assert.isTrue(m2Scope.hasOwnReference('arguments'));
-            assert.isTrue(m2Scope.hasOwnReference('c'));
         });
 
         it('expression', function() {
             var code = '\
                 var a = 10;\
-                var C1 = class C1Private { m1() { var b = 20; } m2() { var c = 30; } }\
+                var C1 = class C1Private { }\
                 ';
 
             process(parser.parse(code), rootScope);
@@ -598,37 +339,13 @@ describe('Processor.names', function() {
 
             assert.isTrue(rootScope.hasOwnReference('a'));
             assert.isTrue(rootScope.hasOwnReference('C1'));
-
-            var classScope = rootScope.scopes[0];
-
-            assert.equal(classScope.countReferences(), 3);
-            assert.equal(classScope.countOwnReferences(), 1);
-            assert.equal(classScope.scopes.length, 2);
-            assert.isTrue(classScope.hasOwnReference('C1Private'));
-
-            var m1Scope = classScope.scopes[0];
-
-            assert.equal(m1Scope.countReferences(), 5);
-            assert.equal(m1Scope.countOwnReferences(), 2);
-            assert.equal(m1Scope.scopes.length, 0);
-
-            assert.isTrue(m1Scope.hasOwnReference('arguments'));
-            assert.isTrue(m1Scope.hasOwnReference('b'));
-
-            var m2Scope = classScope.scopes[1];
-
-            assert.equal(m2Scope.countReferences(), 5);
-            assert.equal(m2Scope.countOwnReferences(), 2);
-            assert.equal(m2Scope.scopes.length, 0);
-
-            assert.isTrue(m2Scope.hasOwnReference('arguments'));
-            assert.isTrue(m2Scope.hasOwnReference('c'));
+            assert.isTrue(rootScope.scopes[0].hasOwnReference('C1Private'));
         });
 
         it('hoisting', function() {
             var code = '\
                 if(1) {\
-                    class C1 { m1() { var b = 20; } m2() { var c = 30; } }\
+                    class C1 { }\
                 }\
                 ';
 
@@ -642,21 +359,6 @@ describe('Processor.names', function() {
             assert.equal(ifScope.countReferences(), 1);
             assert.equal(ifScope.countOwnReferences(), 1);
             assert.equal(ifScope.scopes.length, 1);
-
-            var classScope = ifScope.scopes[0];
-
-            assert.equal(classScope.countReferences(), 1);
-            assert.equal(classScope.countOwnReferences(), 0);
-            assert.equal(classScope.scopes.length, 2);
-
-            var m1Scope = classScope.scopes[0];
-
-            assert.equal(m1Scope.countReferences(), 3);
-            assert.equal(m1Scope.countOwnReferences(), 2);
-            assert.equal(m1Scope.scopes.length, 0);
-
-            assert.isTrue(m1Scope.hasOwnReference('arguments'));
-            assert.isTrue(m1Scope.hasOwnReference('b'));
         });
     });
 

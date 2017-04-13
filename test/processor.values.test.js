@@ -2363,4 +2363,206 @@ describe('Processor.values', function() {
             assert.deepEqual(rootScope.getReference('obj').value, { undefined: undefined, b: undefined });
         });
     });
+
+    describe('function', function() {
+        it('should pass argument to parameter', function() {
+            var code = '\
+                function fn1(a, b){ return [a, b] };\
+                var fn2 = function(a, b){ return [a, b] };\
+                var fn3 = (a, b) => [a, b];\
+                var result1 = fn1(1, 2);\
+                var result2 = fn2(1, 2);\
+                var result3 = fn3(1, 2);\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.deepEqual(rootScope.getReference('result1').value, [1, 2]);
+            assert.deepEqual(rootScope.getReference('result2').value, [1, 2]);
+            assert.deepEqual(rootScope.getReference('result3').value, [1, 2]);
+        });
+
+        it('should support arguments variable', function() {
+            var code = '\
+                function fn1(){ return [arguments[0], arguments[1]] };\
+                var fn2 = function(){ return [arguments[0], arguments[1]] };\
+                var fn3 = function(){ return (() => [arguments[0], arguments[1]])() };\
+                var result1 = fn1(1, 2);\
+                var result2 = fn2(1, 2);\
+                var result3 = fn3(1, 2);\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.deepEqual(rootScope.getReference('result1').value, [1, 2]);
+            assert.deepEqual(rootScope.getReference('result2').value, [1, 2]);
+            assert.deepEqual(rootScope.getReference('result3').value, [1, 2]);
+        });
+
+        it('should mix arguments variable and parameters', function() {
+            var code = '\
+                function fn1(a, b){ return [a, b, arguments[2]] };\
+                var fn2 = function(a, b){ return [a, b, arguments[2]] };\
+                var fn3 = function(a, b){ return ((c) => [arguments[0], arguments[1], c])(arguments[2]) };\
+                var result1 = fn1(1, 2, 3);\
+                var result2 = fn2(1, 2, 3);\
+                var result3 = fn3(1, 2, 3);\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.deepEqual(rootScope.getReference('result1').value, [1, 2, 3]);
+            assert.deepEqual(rootScope.getReference('result2').value, [1, 2, 3]);
+            assert.deepEqual(rootScope.getReference('result3').value, [1, 2, 3]);
+        });
+
+        it('should count arguments', function() {
+            var code = '\
+                function fn1(a, b){ return arguments.length };\
+                var fn2 = function(a, b){ return arguments.length };\
+                var fn3 = function(a, b){ return (c => arguments.length)() };\
+                var result1 = fn1(10);\
+                var result2 = fn2(10, 20);\
+                var result3 = fn3(10, 20, 30);\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('result1').value, 1);
+            assert.strictEqual(rootScope.getReference('result2').value, 2);
+            assert.strictEqual(rootScope.getReference('result3').value, 3);
+        });
+
+        it('should return undefined without return', function() {
+            var code = '\
+                function fn1(a, b){ };\
+                var fn2 = function(a, b){ };\
+                var fn3 = function(a, b){ };\
+                var result1 = fn1(10);\
+                var result2 = fn2(10, 20);\
+                var result3 = fn3(10, 20, 30);\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.isUndefined(rootScope.getReference('result1').value);
+            assert.isUndefined(rootScope.getReference('result2').value);
+            assert.isUndefined(rootScope.getReference('result3').value);
+        });
+
+        it('should use parent scope', function() {
+            var code = '\
+                function fn(){ return ++a }\
+                var a = 1;\
+                var result1 = fn();\
+                var result2 = fn();\
+                var result3 = fn();\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 4);
+            assert.strictEqual(rootScope.getReference('result1').value, 2);
+            assert.strictEqual(rootScope.getReference('result2').value, 3);
+            assert.strictEqual(rootScope.getReference('result3').value, 4);
+        });
+
+        it('should save root scope when return function', function() {
+            var code = '\
+                var a = 10;\
+                function fn(){ return ++a; };\
+                function fn1(a, b){ return fn };\
+                var fn2 = function(a, b){ return fn };\
+                var fn3 = function(a, b){ return (c => fn)() };\
+                var result1 = fn(1, 2);\
+                var result2 = fn(1, 2);\
+                var result3 = fn(1, 2);\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('a').value, 13);
+            assert.strictEqual(rootScope.getReference('result1').value, 11);
+            assert.strictEqual(rootScope.getReference('result2').value, 12);
+            assert.strictEqual(rootScope.getReference('result3').value, 13);
+        });
+
+        it('should save parent scope when return function', function() {
+            var code = '\
+                function fn1(a, b){ function fn(){ return ++a; } return fn };\
+                var fn2 = function(a, b){ function fn(){ return ++a; } return fn };\
+                var fn3 = (a, b) => function fn(){ return ++a; };\
+                var wrapper1 = fn1(10);\
+                var wrapper2 = fn2(20); wrapper2();\
+                var wrapper3 = fn3(30); wrapper3(); wrapper3(); \
+                var result1 = wrapper1();\
+                var result2 = wrapper2();\
+                var result3 = wrapper3();\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('result1').value, 11);
+            assert.strictEqual(rootScope.getReference('result2').value, 22);
+            assert.strictEqual(rootScope.getReference('result3').value, 33);
+        });
+
+        it('should support this', function() {
+            var code = '\
+                function fn(a,b){ return c => { var d = 1; d += 1; return a + b + this.c + arguments[0] + c + d } }\
+                var obj1 = { a: { b: { c: 100 } } };\
+                var obj2 = { a: { b: { c: 200 } } };\
+                obj1.a.b.fn = fn;\
+                obj2.a.b.fn = fn;\
+                var result1 = obj1.a.b.fn(1, 1)(10);\
+                var result2 = obj2.a.b.fn(2, 2)(20);\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('result1').value, 115);
+            assert.strictEqual(rootScope.getReference('result2').value, 228);
+        });
+    });
+
+    describe('class', function() {
+        it('should define methods', function() {
+            var code = '\
+                (function(){\
+                    var methodName = \'m4\';\
+                    class C1 { m1(){ } m2(){ }}\
+                    class C2 { m3(){ } [methodName](){ }}\
+                    class C3 { [5](){ } 6(){ } [und](){ }}\
+                })()';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.property(rootScope.scopes[0].getReference('C1').value.prototype, 'm1');
+            assert.property(rootScope.scopes[0].getReference('C1').value.prototype, 'm2');
+            assert.property(rootScope.scopes[0].getReference('C2').value.prototype, 'm3');
+            assert.property(rootScope.scopes[0].getReference('C2').value.prototype, 'm4');
+            assert.property(rootScope.scopes[0].getReference('C3').value.prototype, '5');
+            assert.property(rootScope.scopes[0].getReference('C3').value.prototype, '6');
+        });
+    });
 });
