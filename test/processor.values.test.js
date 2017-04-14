@@ -3,6 +3,7 @@ var assert = require('chai').assert;
 var Scope = require('../lib/scope');
 var processNames = require('../lib/namesProcessor');
 var processValues = require('../lib/valuesProcessor');
+var createRunner = require('../lib/valueResolver').createRunner;
 
 describe('Processor.values', function() {
     var rootScope;
@@ -2540,6 +2541,65 @@ describe('Processor.values', function() {
 
             assert.strictEqual(rootScope.getReference('result1').value, 115);
             assert.strictEqual(rootScope.getReference('result2').value, 228);
+        });
+
+        it('should set this to undefined when not set', function() {
+            var code = '\
+                var fn = function(){ return function(){ return this } };\
+                var result = fn()();\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.isUndefined(rootScope.getReference('result').value);
+        });
+
+        describe('runner', function() {
+            it('should run runner', function() {
+                var code = '\
+                    var result = fn();\
+                ';
+                var ast = parser.parse(code);
+
+                rootScope.setReference('fn', {
+                    value: createRunner(rootScope, function() {
+                        return { resolved: true, value: 10 };
+                    })
+                });
+                processNames(ast, rootScope);
+                processValues(ast);
+
+                assert.strictEqual(rootScope.getReference('result').value, 10);
+            });
+
+            it('should pass arguments', function() {
+                var code = '\
+                    var result = fn(2, 3);\
+                ';
+                var ast = parser.parse(code);
+                var result;
+
+                rootScope.setReference('fn', {
+                    value: createRunner(rootScope, function(args, callExpression, fnExpression, scope) {
+                        return {
+                            resolved: true,
+                            value: [args[0] + args[1], args, callExpression, fnExpression, scope]
+                        };
+                    })
+                });
+                processNames(ast, rootScope);
+                processValues(ast);
+                result = rootScope.getReference('result').value;
+
+                assert.strictEqual(result[0], 5);
+                assert.deepEqual(result[1], { 0: 2, 1: 3, length: 2 });
+                assert.strictEqual(result[2].type, 'CallExpression');
+                assert.strictEqual(result[3].type, 'FunctionExpression');
+                assert.typeOf(result[3].runner, 'function');
+                assert.strictEqual(result[4].parent, rootScope);
+            });
         });
     });
 
