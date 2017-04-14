@@ -63,7 +63,7 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('b').value, {b: 1, c: {d: 1, e: 2}});
+            assert.deepEqual(rootScope.getReference('b').value, { b: 1, c: { d: 1, e: 2 } });
             assert.strictEqual(rootScope.getReference('c').value, 1);
         });
 
@@ -79,7 +79,7 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('a').value, [1, 2, [3, 4], {a: {b: {c: [5, 2, 7, 10]}}}]);
+            assert.deepEqual(rootScope.getReference('a').value, [1, 2, [3, 4], { a: { b: { c: [5, 2, 7, 10] } } }]);
             assert.strictEqual(rootScope.getReference('b').value, 1);
             assert.strictEqual(rootScope.getReference('c').value, 4);
             assert.strictEqual(rootScope.getReference('d').value, 6);
@@ -869,8 +869,8 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('a').value, {b: 1, c: {d: {e: 20, f: 30}}});
-            assert.deepEqual(rootScope.getReference('b').value, {e: 20, f: 30});
+            assert.deepEqual(rootScope.getReference('a').value, { b: 1, c: { d: { e: 20, f: 30 } } });
+            assert.deepEqual(rootScope.getReference('b').value, { e: 20, f: 30 });
             assert.strictEqual(rootScope.getReference('c').value, 20);
         });
 
@@ -886,8 +886,8 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('a').value, {b: 1, c: {d: {e: 20, f: 30}}});
-            assert.deepEqual(rootScope.getReference('b').value, {e: 20, f: 30});
+            assert.deepEqual(rootScope.getReference('a').value, { b: 1, c: { d: { e: 20, f: 30 } } });
+            assert.deepEqual(rootScope.getReference('b').value, { e: 20, f: 30 });
             assert.strictEqual(rootScope.getReference('c').value, 20);
         });
 
@@ -1259,7 +1259,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
             assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
             assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-            assert.strictEqual(rootScope.getReference('u').value, 2 in {2: 3});
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
         });
 
         it('identifier', function() {
@@ -1316,7 +1316,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
             assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
             assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-            assert.strictEqual(rootScope.getReference('u').value, 2 in {2: 3});
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
             assert.strictEqual(rootScope.getReference('v').value, 2);
         });
 
@@ -1371,7 +1371,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
             assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
             assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-            assert.strictEqual(rootScope.getReference('u').value, 2 in {2: 3});
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
         });
 
         it('computed member expression', function() {
@@ -1426,7 +1426,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
             assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
             assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-            assert.strictEqual(rootScope.getReference('u').value, 2 in {2: 3});
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
         });
 
         it('object + member expression', function() {
@@ -1479,7 +1479,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
             assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
             assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-            assert.strictEqual(rootScope.getReference('u').value, 2 in {2: 3});
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
         });
 
         it('multi binary expression - literal', function() {
@@ -1531,7 +1531,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
             assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
             assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-            assert.strictEqual(rootScope.getReference('u').value, 2 in {2: 3});
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
         });
 
         it('multi binary expression - identifier', function() {
@@ -1585,7 +1585,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
             assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
             assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-            assert.strictEqual(rootScope.getReference('u').value, 2 in {2: 3});
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
         });
 
         it('multi binary expression - object + member expression', function() {
@@ -1638,7 +1638,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('r').value, 2 <= 3);
             assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
             assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
-            assert.strictEqual(rootScope.getReference('u').value, 2 in {2: 3});
+            assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
         });
 
         it('undefined binary expression', function() {
@@ -2500,7 +2500,7 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('obj').value, {0: 10, 1: 20});
+            assert.deepEqual(rootScope.getReference('obj').value, { 0: 10, 1: 20 });
         });
 
         it('key - identifier, value - literal', function() {
@@ -2510,7 +2510,7 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('obj').value, {a: 10, b: 20});
+            assert.deepEqual(rootScope.getReference('obj').value, { a: 10, b: 20 });
         });
 
         it('key - identifier, value - identifier', function() {
@@ -2520,7 +2520,7 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('obj').value, {a: 10, b: 20});
+            assert.deepEqual(rootScope.getReference('obj').value, { a: 10, b: 20 });
         });
 
         it('key - computed, value - identifier', function() {
@@ -2530,7 +2530,7 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('obj').value, {10: 10, b: 20});
+            assert.deepEqual(rootScope.getReference('obj').value, { 10: 10, b: 20 });
         });
 
         it('key - identifier, value - object expression', function() {
@@ -2540,7 +2540,7 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('obj').value, {a: {a: 10, b: 20}});
+            assert.deepEqual(rootScope.getReference('obj').value, { a: { a: 10, b: 20 } });
         });
 
         it('key - array, value - array', function() {
@@ -2550,7 +2550,7 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('obj').value, {'1,2,3': [1, 2, 3]});
+            assert.deepEqual(rootScope.getReference('obj').value, { '1,2,3': [1, 2, 3] });
             assert.deepEqual(rootScope.getReference('b').value, [1, 2, 3]);
         });
 
@@ -2561,7 +2561,7 @@ describe('Processor.values', function() {
             processNames(ast, rootScope);
             processValues(ast);
 
-            assert.deepEqual(rootScope.getReference('obj').value, {undefined: undefined, b: undefined});
+            assert.deepEqual(rootScope.getReference('obj').value, { undefined: undefined, b: undefined });
         });
     });
 
@@ -2794,6 +2794,19 @@ describe('Processor.values', function() {
             assert.isUndefined(rootScope.getReference('result').value);
         });
 
+        it('hoisting', function() {
+            var code = '\
+                var result1 = fn(1, 2);\
+                function fn(a, b){ return a + b };\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.deepEqual(rootScope.getReference('result1').value, 3);
+        });
+
         describe('runner', function() {
             it('should run runner', function() {
                 var code = '\
@@ -2803,7 +2816,7 @@ describe('Processor.values', function() {
 
                 rootScope.setReference('fn', {
                     value: createRunner(rootScope, function() {
-                        return {resolved: true, value: 10};
+                        return { resolved: true, value: 10 };
                     })
                 });
                 processNames(ast, rootScope);
@@ -2832,7 +2845,7 @@ describe('Processor.values', function() {
                 result = rootScope.getReference('result').value;
 
                 assert.strictEqual(result[0], 5);
-                assert.deepEqual(result[1], {0: 2, 1: 3, length: 2});
+                assert.deepEqual(result[1], { 0: 2, 1: 3, length: 2 });
                 assert.strictEqual(result[2].type, 'CallExpression');
                 assert.strictEqual(result[3].type, 'FunctionExpression');
                 assert.typeOf(result[3].runner, 'function');
