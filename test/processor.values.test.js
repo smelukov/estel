@@ -2746,6 +2746,22 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('result2').value, 228);
         });
 
+        it('should support new - basic', function() {
+            var code = '\
+                function fn1(){ this.a = 1 }\
+                function fn2(a,b){ this.b = 2; return { a, b } }\
+                var result1 = new fn1();\
+                var result2 = new fn2(3, 4);\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.deepEqual(rootScope.getReference('result1').value, { a: 1 });
+            assert.deepEqual(rootScope.getReference('result2').value, { a: 3, b: 4 });
+        });
+
         it('complex case with closure and this', function() {
             var code = '\
                 function fn(a,b) {\
