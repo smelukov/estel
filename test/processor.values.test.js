@@ -2644,12 +2644,14 @@ describe('Processor.values', function() {
 
         it('should return undefined without return', function() {
             var code = '\
-                function fn1(a, b){ };\
-                var fn2 = function(a, b){ };\
-                var fn3 = function(a, b){ };\
-                var result1 = fn1(10);\
-                var result2 = fn2(10, 20);\
-                var result3 = fn3(10, 20, 30);\
+                function fn1(){ };\
+                var fn2 = function(){ };\
+                var fn3 = () => { };\
+                var fn4 = function(){ return; };\
+                var result1 = fn1();\
+                var result2 = fn2();\
+                var result3 = fn3();\
+                var result4 = fn4();\
             ';
             var ast = parser.parse(code);
 
@@ -2659,6 +2661,7 @@ describe('Processor.values', function() {
             assert.isUndefined(rootScope.getReference('result1').value);
             assert.isUndefined(rootScope.getReference('result2').value);
             assert.isUndefined(rootScope.getReference('result3').value);
+            assert.isUndefined(rootScope.getReference('result4').value);
         });
 
         it('should use parent scope', function() {
