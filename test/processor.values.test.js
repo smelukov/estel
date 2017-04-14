@@ -1,4 +1,4 @@
-var parser = require('../lib/parser');
+var parser = require('esprima');
 var assert = require('chai').assert;
 var Scope = require('../lib/scope');
 var processNames = require('../lib/namesProcessor');
@@ -1287,6 +1287,9 @@ describe('Processor.values', function() {
                     var s = left > right;\
                     var t = left >= right;\
                     var u = left in { [left]: right };\
+                    var v = 0;\
+                    1 * function(){ v++ }();\
+                    1 == function(){ v++ }();\
                 ';
             var ast = parser.parse(code);
 
@@ -1314,6 +1317,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('s').value, 2 > 3);
             assert.strictEqual(rootScope.getReference('t').value, 2 >= 3);
             assert.strictEqual(rootScope.getReference('u').value, 2 in { 2: 3 });
+            assert.strictEqual(rootScope.getReference('v').value, 2);
         });
 
         it('member expression', function() {
@@ -1788,6 +1792,12 @@ describe('Processor.values', function() {
                     var g = ~one;\
                     var h = typeof one;\
                     var i = void one;\
+                    var j = 0;\
+                    function fn() { j++ }\
+                    !fn();\
+                    !!fn();\
+                    +fn();\
+                    -fn();\
                 ';
             var ast = parser.parse(code);
 
@@ -1803,11 +1813,12 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('g').value, ~1);
             assert.strictEqual(rootScope.getReference('h').value, typeof 1);
             assert.strictEqual(rootScope.getReference('i').value, void 1);
+            assert.strictEqual(rootScope.getReference('j').value, 4);
         });
 
         it('member expression', function() {
             var code = '\
-                    var obj = { a: { b: { c: 1 } } };\
+                    var obj = { a: { b: { c: 1, fn() { j++ } } } };\
                     var a = -obj.a.b.c;\
                     var b = -(-obj.a.b.c);\
                     var c = +obj.a.b.c;\
@@ -1817,6 +1828,11 @@ describe('Processor.values', function() {
                     var g = ~obj.a.b.c;\
                     var h = typeof obj.a.b.c;\
                     var i = void obj.a.b.c;\
+                    var j = 0;\
+                    !obj.a.b.fn();\
+                    !!obj.a.b.fn();\
+                    +obj.a.b.fn();\
+                    -obj.a.b.fn();\
                 ';
             var ast = parser.parse(code);
 
@@ -1832,12 +1848,14 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('g').value, ~1);
             assert.strictEqual(rootScope.getReference('h').value, typeof 1);
             assert.strictEqual(rootScope.getReference('i').value, void 1);
+            assert.strictEqual(rootScope.getReference('j').value, 4);
         });
 
         it('computed member expression', function() {
             var code = '\
                     var prop = \'c\';\
-                    var obj = { a: { b: { c: 1 } } };\
+                    var propFn = \'fn\';\
+                    var obj = { a: { b: { c: 1, fn() { j++ } } } };\
                     var a = -obj.a.b[prop];\
                     var b = -(-obj.a.b[prop]);\
                     var c = +obj.a.b[prop];\
@@ -1847,6 +1865,11 @@ describe('Processor.values', function() {
                     var g = ~obj.a.b[prop];\
                     var h = typeof obj.a.b[prop];\
                     var i = void obj.a.b[prop];\
+                    var j = 0;\
+                    !obj.a.b[propFn]();\
+                    !!obj.a.b[propFn]();\
+                    +obj.a.b[propFn]();\
+                    -obj.a.b[propFn]();\
                 ';
             var ast = parser.parse(code);
 
@@ -1862,6 +1885,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('g').value, ~1);
             assert.strictEqual(rootScope.getReference('h').value, typeof 1);
             assert.strictEqual(rootScope.getReference('i').value, void 1);
+            assert.strictEqual(rootScope.getReference('j').value, 4);
         });
 
         it('object + member expression', function() {
@@ -1874,7 +1898,12 @@ describe('Processor.values', function() {
                     var f = !!{ a: { b: { c: 1 } } }.a.b.c;\
                     var g = ~{ a: { b: { c: 1 } } }.a.b.c;\
                     var h = typeof { a: { b: { c: 1 } } }.a.b.c;\
-                    var i = void { a: { b: { c: 1 } } }.a.b.c;\
+                    var i = void { a: { b: { fn() { j++ } } } }.a.b.c;\
+                    var j = 0;\
+                    !{ a: { b: { fn() { j++ }} } }.a.b.fn();\
+                    !!{ a: { b: { fn() { j++ } } } }.a.b.fn();\
+                    +{ a: { b: { fn() { j++ } } } }.a.b.fn();\
+                    -{ a: { b: { fn() { j++ } } } }.a.b.fn();\
                 ';
             var ast = parser.parse(code);
 
@@ -1890,6 +1919,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('g').value, ~1);
             assert.strictEqual(rootScope.getReference('h').value, typeof 1);
             assert.strictEqual(rootScope.getReference('i').value, void 1);
+            assert.strictEqual(rootScope.getReference('j').value, 4);
         });
 
         describe('delete', function() {
@@ -1984,6 +2014,9 @@ describe('Processor.values', function() {
                     var c = a++;\
                     var d = --a;\
                     var e = a--;\
+                    var f = 0;\
+                    f++;\
+                    f++;\
                 ';
             var ast = parser.parse(code);
 
@@ -1995,16 +2028,20 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('c').value, 2);
             assert.strictEqual(rootScope.getReference('d').value, 2);
             assert.strictEqual(rootScope.getReference('e').value, 2);
+            assert.strictEqual(rootScope.getReference('f').value, 2);
         });
 
         it('member expression', function() {
             var code = '\
                     var obj = { a: { b: { c: 1 } } };\
-                    var b = ++obj.a.b.c;\
-                    var c = obj.a.b.c++;\
-                    var d = --obj.a.b.c;\
-                    var e = obj.a.b.c--;\
-                    var a = obj.a.b.c\
+                    var c = ++obj.a.b.c;\
+                    var d = obj.a.b.c++;\
+                    var e = --obj.a.b.c;\
+                    var f = obj.a.b.c--;\
+                    var a = obj.a.b.c;\
+                    obj.a.b.c++;\
+                    obj.a.b.c++;\
+                    var b = obj.a.b.c;\
                 ';
             var ast = parser.parse(code);
 
@@ -2012,21 +2049,25 @@ describe('Processor.values', function() {
             processValues(ast);
 
             assert.strictEqual(rootScope.getReference('a').value, 1);
-            assert.strictEqual(rootScope.getReference('b').value, 2);
+            assert.strictEqual(rootScope.getReference('b').value, 3);
             assert.strictEqual(rootScope.getReference('c').value, 2);
             assert.strictEqual(rootScope.getReference('d').value, 2);
             assert.strictEqual(rootScope.getReference('e').value, 2);
+            assert.strictEqual(rootScope.getReference('f').value, 2);
         });
 
         it('computed member expression', function() {
             var code = '\
                     var prop = \'c\';\
                     var obj = { a: { b: { c: 1 } } };\
-                    var b = ++obj.a.b[prop];\
-                    var c = obj.a.b[prop]++;\
-                    var d = --obj.a.b[prop];\
-                    var e = obj.a.b[prop]--;\
-                    var a = obj.a.b[prop]\
+                    var c = ++obj.a.b[prop];\
+                    var d = obj.a.b[prop]++;\
+                    var e = --obj.a.b[prop];\
+                    var f = obj.a.b[prop]--;\
+                    var a = obj.a.b[prop];\
+                    obj.a.b[prop]++;\
+                    obj.a.b[prop]++;\
+                    var b = obj.a.b[prop];\
                 ';
             var ast = parser.parse(code);
 
@@ -2034,10 +2075,11 @@ describe('Processor.values', function() {
             processValues(ast);
 
             assert.strictEqual(rootScope.getReference('a').value, 1);
-            assert.strictEqual(rootScope.getReference('b').value, 2);
+            assert.strictEqual(rootScope.getReference('b').value, 3);
             assert.strictEqual(rootScope.getReference('c').value, 2);
             assert.strictEqual(rootScope.getReference('d').value, 2);
             assert.strictEqual(rootScope.getReference('e').value, 2);
+            assert.strictEqual(rootScope.getReference('f').value, 2);
         });
 
         it('undefined identifier', function() {
@@ -2046,12 +2088,14 @@ describe('Processor.values', function() {
                     var c = a++;\
                     var d = --a;\
                     var e = a--;\
+                    a--\
                 ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
+            assert.isFalse(rootScope.hasReference('a'));
             assert.isUndefined(rootScope.getReference('b').value);
             assert.isUndefined(rootScope.getReference('c').value);
             assert.isUndefined(rootScope.getReference('d').value);
@@ -2087,12 +2131,14 @@ describe('Processor.values', function() {
                     var c = obj.a.b.c++;\
                     var d = --obj.a.b.c;\
                     var e = obj.a.b.c--;\
+                    obj.a.b.c--;\
                 ';
             var ast = parser.parse(code);
 
             processNames(ast, rootScope);
             processValues(ast);
 
+            assert.isFalse(rootScope.hasReference('obj'));
             assert.isUndefined(rootScope.getReference('b').value);
             assert.isUndefined(rootScope.getReference('c').value);
             assert.isUndefined(rootScope.getReference('d').value);
@@ -2107,6 +2153,12 @@ describe('Processor.values', function() {
                     var b = 0 && 1;\
                     var c = 1 || 1;\
                     var d = 0 || 1;\
+                    var e = 0;\
+                    function fn(){ e++ }\
+                    0 || fn();\
+                    1 || fn();\
+                    1 && fn();\
+                    0 && fn();\
                 ';
             var ast = parser.parse(code);
 
@@ -2117,6 +2169,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('b').value, 0);
             assert.strictEqual(rootScope.getReference('c').value, 1);
             assert.strictEqual(rootScope.getReference('d').value, 1);
+            assert.strictEqual(rootScope.getReference('e').value, 2);
         });
 
         it('identifier', function() {
@@ -2127,6 +2180,12 @@ describe('Processor.values', function() {
                     var b = zero && one;\
                     var c = one || one;\
                     var d = zero || one;\
+                    var e = zero;\
+                    function fn(){ e++ }\
+                    zero || fn();\
+                    one || fn();\
+                    one && fn();\
+                    zero && fn();\
                 ';
             var ast = parser.parse(code);
 
@@ -2137,6 +2196,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('b').value, 0);
             assert.strictEqual(rootScope.getReference('c').value, 1);
             assert.strictEqual(rootScope.getReference('d').value, 1);
+            assert.strictEqual(rootScope.getReference('e').value, 2);
         });
 
         it('member expression', function() {
@@ -2148,6 +2208,12 @@ describe('Processor.values', function() {
                     var b = obj.a.b.c.e && zero;\
                     var c = obj.a.b.c.d || one;\
                     var d = obj.a.b.c.e || one;\
+                    var e = zero;\
+                    obj.a.b.c.f = function fn(){ e++ };\
+                    zero || obj.a.b.c.f();\
+                    one || obj.a.b.c.f();\
+                    one && obj.a.b.c.f();\
+                    zero && obj.a.b.c.f();\
                 ';
             var ast = parser.parse(code);
 
@@ -2158,12 +2224,14 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('b').value, 0);
             assert.strictEqual(rootScope.getReference('c').value, 1);
             assert.strictEqual(rootScope.getReference('d').value, 1);
+            assert.strictEqual(rootScope.getReference('e').value, 2);
         });
 
         it('computed member expression', function() {
             var code = '\
                     var propD = \'d\';\
                     var propE = \'e\';\
+                    var propF = \'f\';\
                     var obj = { a: { b: { c: { d: 1, e: 0 } } } };\
                     var one = 1;\
                     var zero = 0;\
@@ -2171,6 +2239,12 @@ describe('Processor.values', function() {
                     var b = obj.a.b.c[propE] && zero;\
                     var c = obj.a.b.c[propD] || one;\
                     var d = obj.a.b.c[propE] || one;\
+                    var e = zero;\
+                    obj.a.b.c.f = function fn(){ e++ };\
+                    zero || obj.a.b.c[propF]();\
+                    one || obj.a.b.c[propF]();\
+                    one && obj.a.b.c[propF]();\
+                    zero && obj.a.b.c[propF]();\
                 ';
             var ast = parser.parse(code);
 
@@ -2181,6 +2255,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('b').value, 0);
             assert.strictEqual(rootScope.getReference('c').value, 1);
             assert.strictEqual(rootScope.getReference('d').value, 1);
+            assert.strictEqual(rootScope.getReference('e').value, 2);
         });
 
         it('object + member expression', function() {
@@ -2191,6 +2266,11 @@ describe('Processor.values', function() {
                     var b = { a: { b: { c: 0 } } }.a.b.c && zero;\
                     var c = { a: { b: { c: 1 } } }.a.b.c || one;\
                     var d = { a: { b: { c: 0 } } }.a.b.c || one;\
+                    var e = zero;\
+                    zero || { a: { b: { c: 1, fn(){ e++ } } } }.a.b.fn();\
+                    one || { a: { b: { c: 1, fn(){ e++ } } } }.a.b.fn();\
+                    one && { a: { b: { c: 1, fn(){ e++ } } } }.a.b.fn();\
+                    zero && { a: { b: { c: 1, fn(){ e++ } } } }.a.b.fn();\
                 ';
             var ast = parser.parse(code);
 
@@ -2201,6 +2281,7 @@ describe('Processor.values', function() {
             assert.strictEqual(rootScope.getReference('b').value, 0);
             assert.strictEqual(rootScope.getReference('c').value, 1);
             assert.strictEqual(rootScope.getReference('d').value, 1);
+            assert.strictEqual(rootScope.getReference('e').value, 2);
         });
 
         it('multi logical expression - literal', function() {
@@ -2269,6 +2350,8 @@ describe('Processor.values', function() {
                     var b = (some1 || some2) && zero;\
                     var c = (some1 || some2) || one;\
                     var d = (some1 || some2) || one;\
+                    var e = zero || some2;\
+                    var f = one && some2;\
                 ';
             var ast = parser.parse(code);
 
@@ -2279,6 +2362,8 @@ describe('Processor.values', function() {
             assert.isUndefined(rootScope.getReference('b').value);
             assert.isUndefined(rootScope.getReference('c').value);
             assert.isUndefined(rootScope.getReference('d').value);
+            assert.isUndefined(rootScope.getReference('e').value);
+            assert.isUndefined(rootScope.getReference('f').value);
         });
     });
 
@@ -2541,6 +2626,44 @@ describe('Processor.values', function() {
 
             assert.strictEqual(rootScope.getReference('result1').value, 115);
             assert.strictEqual(rootScope.getReference('result2').value, 228);
+        });
+
+        it('complex case with closure and this', function() {
+            var code = '\
+                function fn(a,b) {\
+                    return c => {\
+                        function innerFunction(arg){\
+                            function someFn() {\
+                                +d;\
+                                d > d;\
+                                d++;\
+                                1 || d++;\
+                            }\
+                            someFn();\
+                            return a + b + this.c + arg + c + d;\
+                        }\
+                        var d = 1;\
+                        d += 1;\
+                        return innerFunction;\
+                    }\
+                }\
+                var obj1 = { a: { b: { c: 100 } } };\
+                var obj2 = { a: { b: { c: 200 } } };\
+                obj1.a.b.fn = fn(1, 1)(20);\
+                obj2.a.b.fn = fn(1, 1)(30);\
+                var result1 = obj1.a.b.fn(40);\
+                var result2 = obj2.a.b.fn(50);\
+                obj2.a.b.fn = obj1.a.b.fn;\
+                var result3 = obj2.a.b.fn(60);\
+            ';
+            var ast = parser.parse(code);
+
+            processNames(ast, rootScope);
+            processValues(ast);
+
+            assert.strictEqual(rootScope.getReference('result1').value, 165);
+            assert.strictEqual(rootScope.getReference('result2').value, 285);
+            assert.strictEqual(rootScope.getReference('result3').value, 286);
         });
 
         it('should set this to undefined when not set', function() {

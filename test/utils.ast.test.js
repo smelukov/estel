@@ -1,5 +1,5 @@
 var assert = require('chai').assert;
-var parser = require('../lib/parser');
+var parser = require('esprima');
 var utils = require('../lib/utils');
 
 describe('Utils.AST', function() {

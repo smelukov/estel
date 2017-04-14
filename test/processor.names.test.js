@@ -1,4 +1,4 @@
-var parser = require('../lib/parser');
+var parser = require('esprima');
 var assert = require('chai').assert;
 var Scope = require('../lib/scope');
 var process = require('../lib/namesProcessor');
