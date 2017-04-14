@@ -1,3 +1,12 @@
+## 0.5.0 (April 14, 2017)
+
+- support CallExpression
+- more support for ClassDeclaration/ClassExpression
+- support function runners
+- fix ignoring some expressions
+- fix logical operators behaviour
+- remove parser
+
 ## 0.4.0 (April 13, 2017)
 
 - support BinaryExpression (closes #6)
