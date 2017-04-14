@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/smelukov/estel.svg?branch=master)](https://travis-ci.org/smelukov/estel)
 [![Coverage Status](https://coveralls.io/repos/github/smelukov/estel/badge.svg?branch=master)](https://coveralls.io/github/smelukov/estel?branch=master)
 
-**Estel** is [EStree](https://github.com/estree/estree) AST interpreter with dynamic analyzing.
+**Estel** is [ESTree](https://github.com/estree/estree) AST interpreter with dynamic analyzing.
 
 ## Install
 
@@ -39,16 +39,14 @@ console.log(numberRef.value); // 10
 console.log(valueRef.value); // 13
 ```
 
-You can use any parser that generates AST in [EStree](https://github.com/estree/estree) format:
+Any parser that produces [ESTree](https://github.com/estree/estree) compatible AST may to be used:
 - [acorn](https://github.com/ternjs/acorn)
 - [esprima](https://github.com/jquery/esprima)
 - [espree](https://github.com/eslint/espree)
 
-or anything else...
-
 ## Scopes
 
-Scope - is a place where the variables is defined.
+Scope is a place where the variables is defined.
 
 Estel supports `var`, `let` and `const` definition:
 
@@ -76,7 +74,7 @@ console.log(ifScope.getOwnReferenceNames()); // ['anotherLet', 'anotherConst']
 
 ## Objects
 
-Estel supports object definition and manipulation with objects:
+Estel supports object creation and manipulation:
 
 ```js
 let ast = parser.parse(`
